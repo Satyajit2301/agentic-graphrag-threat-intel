@@ -1,0 +1,783 @@
+%% =====================================================================================================
+%%  PROJECT REPORT  -  CSE 4192 Machine Learning Projects with Python
+%%  Structure follows the course guide "How to Prepare a Research Project Report" and the department template.
+%%    \fullfalse  ->  FINAL-SEMESTER version (December 2026)        \fulltrue -> FINAL-YEAR version (April/May 2027)
+%%    \showtodotrue shows grey [notes] for text that is still to be written; use \showtodofalse for the version you submit.
+%%  Figures: put the PNG files of report_assets/figures into a folder  figures/  and the table images into  tables/  (next to this file).
+%%           A missing figure shows as a grey box, so the file always compiles.
+%% =====================================================================================================
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{array, booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\newif\iffull      \fullfalse        % <<< \fullfalse = December version, \fulltrue = final-year version
+\newif\ifshowtodo  \showtodotrue     % <<< \showtodofalse before submitting
+\newcommand{\TODO}[1]{\ifshowtodo{\par\small\itshape\color{gray}[#1]\par}\fi}
+\newcommand{\ATTCK}{ATT\&CK}
+\newcommand{\projecttitle}{Agentic Graph Retrieval-Augmented Generation over a Cybersecurity Knowledge Graph with CVE-to-ATT\&CK Link Prediction for \mbox{Multi-Hop} Threat Analysis and Patch Prioritization}
+\newcommand{\shorttitle}{Agentic GraphRAG for Threat Analysis and Patch Prioritization}
+\newcommand{\batchyear}{2023}          % <<< CHECK: admission batch (inferred from the registration numbers, which start with 23)
+\newcommand{\sessionyear}{2026--27}    % <<< CHECK: session as printed on the title page
+\newcommand{\guidename}{\underline{\hspace{5cm}}}    % <<< write the guide's name here, for example Dr.\ A.\ B.\ Name
+\newcommand{\guidedesig}{\underline{\hspace{4cm}}}   % <<< designation of the guide
+\newcommand{\repourl}{https://github.com/YOUR-GITHUB-USERNAME/agentic-graphrag-threat-intel}   % <<< replace YOUR-GITHUB-USERNAME after you create the repository
+\newcommand{\appurl}{https://YOUR-APP-NAME.streamlit.app}                                      % <<< the address that Streamlit Community Cloud gives you
+\newif\ifcert \certtrue                % certificate and declaration pages (\certfalse removes them)
+\newif\ifaidisclose \aidisclosetrue    % one sentence on the use of an AI assistant in the declaration (\aidisclosefalse removes it)
+% figure from  figures/<name>.png  (full width) ; \figs = 70 % width ; table image from  tables/<name>.png
+\newcommand{\fig}[3]{\begin{figure}[H]\centering\IfFileExists{figures/#1.png}{\includegraphics[width=\linewidth]{figures/#1.png}}{\fbox{\parbox[c][4cm][c]{0.9\linewidth}{\centering\small\color{gray}[figure \texttt{\detokenize{#1}} goes here]}}}\caption{#2}\label{#3}\end{figure}}
+\newcommand{\figs}[3]{\begin{figure}[H]\centering\IfFileExists{figures/#1.png}{\includegraphics[width=0.7\linewidth]{figures/#1.png}}{\fbox{\parbox[c][4cm][c]{0.6\linewidth}{\centering\small\color{gray}[figure \texttt{\detokenize{#1}} goes here]}}}\caption{#2}\label{#3}\end{figure}}
+\newcommand{\timg}[3]{\begin{table}[H]\centering\caption{#2}\label{#3}\IfFileExists{tables/#1.png}{\includegraphics[width=\linewidth]{tables/#1.png}}{\fbox{\parbox[c][3cm][c]{0.9\linewidth}{\centering\small\color{gray}[table image \texttt{\detokenize{#1}} goes here]}}}\end{table}}
+
+\titlespacing*{\section}{0pt}{3.5ex plus 1ex minus .2ex}{2.3ex plus .2ex}
+\titlespacing*{\subsection}{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+\setstretch{1.15}
+\setlength{\parskip}{0.5em}
+\setlength{\headheight}{14.5pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\shorttitle}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue!70!black, pdftitle={\shorttitle}}
+
+\begin{document}
+
+% ==========================================
+% TITLE PAGE  (university template; names, batch and session still to be filled in)
+% ==========================================
+\begin{titlepage}
+    \centering
+    {\LARGE \textbf{SIKSHA `O' ANUSANDHAN} \par}
+    {\Large \textbf{(DEEMED TO BE UNIVERSITY)} \par}
+    \vspace{1.2cm}
+    \noindent
+    {\large \textbf{Admission Batch:} \batchyear} \hfill {\large \textbf{Session:} \sessionyear}
+    \vspace{1.2cm}
+
+    {\large \textbf{Laboratory Record} \par}
+    {\LARGE \textbf{Machine Learning Projects with Python} \par}
+    {\LARGE \textbf{(CSE 4192)} \par}
+    \vspace{0.8cm}
+    \begin{tcolorbox}[colback=white, colframe=black!60, boxrule=0.6pt, arc=2pt, width=0.95\textwidth, halign=center]
+        {\hyphenpenalty=10000 \exhyphenpenalty=10000 \Large \textbf{\projecttitle}}
+    \end{tcolorbox}
+    \vspace{0.6cm}
+    \begin{flushleft}
+        \hspace{1cm} {\large \textbf{Submitted by}} \par
+        \vspace{0.25cm}
+        \hspace{2.5cm} 1. Name: Satyajit Sethy (Regd. No.: 2341019390) \par
+        \vspace{0.15cm}
+        \hspace{2.5cm} 2. Name: E Sailaja (Regd. No.: 2341019290) \par
+        \vspace{0.15cm}
+        \hspace{2.5cm} 3. Name: Trushna Tripathy (Regd. No.: 2341020046) \par
+    \end{flushleft}
+    \begin{center}
+        \IfFileExists{logo.png}{\includegraphics[width=3cm]{logo.png}}{\fbox{\parbox[c][2.5cm][c]{3cm}{\centering university logo\\(logo.png)}}}
+    \end{center}
+    \vspace{1cm}
+    {\Large \textbf{Centre for Artificial Intelligence \& Machine Learning} \par}
+    \vspace{0.3cm}
+    {\Large \textbf{Faculty of Engineering \& Technology (ITER)} \par}
+    \vspace{0.3cm}
+    {\large \textbf{Jagamohan Nagar, Jagamara, Bhubaneswar, Odisha - 751030} \par}
+\end{titlepage}
+
+% ==========================================
+% FRONT MATTER
+% ==========================================
+\pagenumbering{roman}
+\ifcert
+\section*{Certificate}
+\addcontentsline{toc}{section}{Certificate}
+\vspace{0.5cm}
+\noindent This is to certify that the project report entitled \textbf{``\projecttitle''} is a record of the work carried out by
+\begin{itemize}[noitemsep]
+    \item Satyajit Sethy (Regd.\ No.\ 2341019390),
+    \item E Sailaja (Regd.\ No.\ 2341019290) and
+    \item Trushna Tripathy (Regd.\ No.\ 2341020046)
+\end{itemize}
+in the Centre for Artificial Intelligence \& Machine Learning, Faculty of Engineering \& Technology (ITER), Siksha `O' Anusandhan (Deemed to be University), Bhubaneswar, for the course \emph{Machine Learning Projects with Python (CSE 4192)} of the B.Tech.\ programme in Computer Science and Engineering (AI \& ML). The work was carried out under my guidance.
+
+\vspace{3cm}
+\noindent\begin{tabular}{@{}p{7.5cm}p{7.5cm}@{}}
+\rule{6.5cm}{0.4pt} & \rule{6.5cm}{0.4pt} \\
+Project guide: \guidename & Head of the Centre \\
+\guidedesig & Centre for AI \& ML, ITER \\
+\end{tabular}
+\newpage
+\section*{Declaration}
+\addcontentsline{toc}{section}{Declaration}
+\vspace{0.3cm}
+\noindent We declare that this report is our own work. The data come from the public sources listed in Chapter~3. Every number in the chapters on results and discussion comes from experiments that we ran ourselves with the code of the repository described in Appendix~A, and every source that we used is cited in the list of references. No part of this report has been submitted for another course or degree.
+\ifaidisclose
+
+\noindent We used an AI assistant (Claude, by Anthropic) to help write code and to draft text. We ran the code ourselves, compared every reported number with the output of our own runs, and we are able to explain the methods and the code in this report.
+\fi
+
+\vspace{2.5cm}
+\noindent\begin{tabular}{@{}p{5.2cm}p{5.2cm}p{5.2cm}@{}}
+\rule{4.6cm}{0.4pt} & \rule{4.6cm}{0.4pt} & \rule{4.6cm}{0.4pt} \\
+Satyajit Sethy & E Sailaja & Trushna Tripathy \\
+2341019390 & 2341019290 & 2341020046 \\
+\end{tabular}
+
+\vspace{1cm}
+\noindent Date: \underline{\hspace{3.5cm}}
+\newpage
+\fi
+\section*{Abstract}
+\addcontentsline{toc}{section}{Abstract}
+Security teams have to decide which of thousands of published vulnerabilities (CVEs) matter for their own software and how an attacker could use them. Answering such questions needs facts that are spread over several public sources and several relations. We combine the National Vulnerability Database, MITRE ATT\&CK v20.1, the CISA Known Exploited Vulnerabilities catalogue, EPSS, CWE and expert CVE-to-ATT\&CK mappings into a knowledge graph of 18,661 nodes and 68,250 edges, and we build a benchmark of 108 multi-hop questions whose gold answers are computed from the graph and confirmed by a second traversal. With the same open language model (gpt-oss-20b), we compare plain retrieval-augmented generation (RAG), GraphRAG and an Agentic GraphRAG system in which the model calls six graph tools. On the 72 test questions, answered once with frozen settings, the average score was 17.3\,\% for plain RAG, 83.1\,\% for GraphRAG and 92.1\,\% for Agentic GraphRAG (65 of 72 answers exactly right). The agent is clearly better on three-hop questions; its overall advantage over GraphRAG is not statistically clear. We also train five machine-learning models to predict missing CVE-to-ATT\&CK techniques on a cold-start split of 1,207 labelled CVEs. All five beat a popularity baseline (NDCG@10 0.59--0.60 against 0.45) but cannot be told apart from each other, and near-duplicate CVEs may inflate the scores. The system is deployed as a Streamlit application that shows the answer, the tool calls and the evidence graph.
+
+\medskip\noindent\textbf{Keywords:} knowledge graph, retrieval-augmented generation, LLM agent, CVE, MITRE ATT\&CK, link prediction, patch prioritization.
+
+\section*{Acknowledgement}
+\addcontentsline{toc}{section}{Acknowledgement}
+We thank our project guide, \guidename, for the direction, the questions and the patience that shaped this work. We are grateful to the Head and the faculty of the Centre for Artificial Intelligence \& Machine Learning, Faculty of Engineering \& Technology (ITER), Siksha `O' Anusandhan (Deemed to be University), for the course and the facilities that made the project possible. We thank the organisations that publish the data we used openly, namely NIST (National Vulnerability Database), MITRE (ATT\&CK and CWE), CISA (Known Exploited Vulnerabilities), FIRST (EPSS) and the Center for Threat-Informed Defense (CVE-to-ATT\&CK mappings), and the makers of the open-source software and free services that we used, in particular Google Colab, Ollama, Hugging Face, Groq, Streamlit and GitHub. Finally, we thank our families and friends for their support.
+
+\newpage
+\tableofcontents
+\newpage
+\listoffigures
+\newpage
+\listoftables
+\newpage
+\section*{List of Abbreviations}
+\addcontentsline{toc}{section}{List of Abbreviations}
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+CVE & Common Vulnerabilities and Exposures \\
+CVSS & Common Vulnerability Scoring System \\
+CWE & Common Weakness Enumeration \\
+EPSS & Exploit Prediction Scoring System \\
+KEV & Known Exploited Vulnerabilities (catalogue of CISA) \\
+NVD & National Vulnerability Database \\
+\ATTCK{} & MITRE Adversarial Tactics, Techniques and Common Knowledge \\
+RAG & Retrieval-Augmented Generation \\
+GraphRAG & Retrieval-Augmented Generation over a knowledge graph \\
+LLM & Large Language Model \\
+BM25 & Best Matching 25 (sparse ranking function) \\
+RRF & Reciprocal Rank Fusion \\
+MLP & Multilayer Perceptron \\
+MRR & Mean Reciprocal Rank \\
+NDCG & Normalised Discounted Cumulative Gain \\
+ROC-AUC & Area under the Receiver Operating Characteristic curve \\
+\iffull GNN & Graph Neural Network \\ \fi
+\bottomrule
+\end{tabularx}
+\newpage
+\pagenumbering{arabic}
+
+% ==========================================
+% 1  INTRODUCTION
+% ==========================================
+\section{Introduction}
+\subsection{Motivation}
+\paragraph{Background.} Tens of thousands of new software vulnerabilities are published every year as CVE records in the National Vulnerability Database~\cite{nvd}, and no organisation can patch all of them. Defenders therefore have to decide which vulnerabilities in \emph{their own} software stack matter most, and how an attacker could use them. Severity scores such as CVSS describe how bad a flaw could be, but not whether it is being exploited; the CISA Known Exploited Vulnerabilities (KEV) catalogue~\cite{kev} and the EPSS exploitation-probability score~\cite{jacobs2021,jacobs2023} add that information, and stakeholder-specific decision trees such as SSVC~\cite{spring2019} were proposed to avoid some shortcomings of CVSS. The MITRE \ATTCK{} knowledge base~\cite{strom2018} describes adversary behaviour as tactics, techniques, mitigations and groups, and expert mappings~\cite{ctid} connect individual CVEs to \ATTCK{} techniques.
+
+\paragraph{Existing challenge.} A practical question such as ``which three CVEs of this server stack should be patched first?'' or ``which attacker groups use every technique that this CVE enables?'' needs facts that are spread over several sources and connected through several relations: product $\rightarrow$ CVE $\rightarrow$ technique $\rightarrow$ tactic, mitigation or group. Assistants that combine a large language model (LLM) with retrieval-augmented generation (RAG) answer from retrieved text passages~\cite{lewis2020}. Passages work for single facts, but multi-hop questions and questions that need counting, intersecting or ranking fail: the passages that are needed are not similar to the question, and the aggregation has to happen over many records, not inside one prompt. In addition, the expert CVE-to-\ATTCK{} mapping covers only a small part of all CVEs (1,207 of the 10,086 CVEs in our data, about 12\,\%).
+
+\paragraph{Need for improvement.} A knowledge graph stores the relations explicitly, graph-based retrieval~\cite{edge2024,peng2024} uses them to select evidence, and an LLM agent that alternates reasoning and tool calls~\cite{yao2023} can walk the graph instead of reading passages. A machine-learning model can predict the missing CVE-to-\ATTCK{} links. What is missing is a controlled, measurable comparison of these ideas on verifiable questions, using the same LLM for every method, and a working application that shows the evidence behind each answer.
+
+
+\subsection{Problem Statement}
+\paragraph{Current situation.} Vulnerability data (NVD, CISA KEV, EPSS) and adversary knowledge (\ATTCK{}, expert CVE-to-\ATTCK{} mappings) are public but stored in separate sources, and RAG-style assistants answer from text chunks.
+\paragraph{Research gap.} Text retrieval cannot reliably answer multi-hop and aggregation questions over these sources; it is unclear how much a knowledge graph, and then a tool-using agent, improves on it when the LLM, the data and the scoring are kept identical; and links from CVEs to \ATTCK{} techniques are missing for about 88\,\% of the CVEs. Section~\ref{sec:lit} shows that the studies we reviewed do not cover this combination.
+\paragraph{Proposed solution.} A knowledge graph built from the six sources, a benchmark of 108 multi-hop questions with computed gold answers, three question-answering systems that differ only in how they retrieve evidence (plain RAG, GraphRAG, Agentic GraphRAG), machine-learning models that predict missing CVE-to-\ATTCK{} techniques, and a deployed web application.
+
+\subsection{Research Objectives}\label{sec:objectives}
+\begin{enumerate}[noitemsep, topsep=3pt, label=\textbf{O\arabic*.}]
+    \item To collect, clean and integrate NVD, \ATTCK{}, CISA KEV, EPSS, expert CVE-to-\ATTCK{} mapping and CWE data into a knowledge graph.
+    \item To design a benchmark of 108 multi-hop questions of nine types whose gold answers are computed from the graph and verified by an independent traversal.
+    \item To develop plain-RAG and GraphRAG baselines and an Agentic GraphRAG system with six graph tools, all using the same open LLM (gpt-oss-20b).
+    \item To develop and tune machine-learning models (logistic regression, k-nearest neighbours, support vector machine, random forest, multilayer perceptron) that predict missing CVE-to-\ATTCK{} technique links\iffull, and to compare them with a graph neural network\fi.
+    \item To evaluate the three question-answering systems and the link-prediction models on held-out data with appropriate metrics (average score, exact match, Hits@k, MRR, precision, recall, F1, ROC-AUC) and to compare them with each other.
+    \item To deploy the analyst as a Streamlit web application that shows the answer, the tool calls and the supporting part of the graph.
+\end{enumerate}
+\begin{table}[H]\centering\caption{Mapping of objectives to report chapters.}\label{tab:objmap}
+\begin{tabular}{p{1.2cm}p{7.2cm}p{5cm}}\toprule
+\textbf{Obj.} & \textbf{Focus} & \textbf{Chapters} \\ \midrule
+O1 & Data collection, preprocessing, knowledge graph & 3, 4, 5 \\
+O2 & Benchmark design & 6 \\
+O3 & Model development and architecture of the QA systems & 7, 9 \\
+O4 & Link-prediction models and tuning & 7, 9 \\
+O5 & Performance evaluation and comparative analysis & 10, 11 \\
+O6 & Deployment & 12 \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Expected Outcome}
+A threat-intelligence analyst that answers multi-hop vulnerability questions more accurately than text retrieval, shows the evidence behind each answer, and fills gaps in the CVE-to-\ATTCK{} knowledge with predicted links, together with measurements that show how much each component contributes.
+
+\subsection{Organisation of the Report}
+Chapter~2 reviews related work and states the research gap. Chapter~3 describes the data sources and the resulting data set, and Chapter~4 explores it. Chapter~5 explains how the data were cleaned, how the knowledge graph was built and how the features and splits were made. Chapter~6 gives the workflow, the question benchmark and the evaluation metrics, and Chapter~7 describes the three question-answering systems and the link-prediction models. Chapter~8 lists the experimental setup, Chapter~9 the development and tuning of the models, and Chapter~10 the results on held-out data. Chapter~11 discusses what the results mean, Chapter~12 describes the deployed application and its tests, Chapter~13 lists the limitations, and Chapters~14 and~15 give the conclusion and the future work. The appendices contain the code layout, further results, screenshots of the application and the contributions of the group members.
+
+% ==========================================
+% 2  LITERATURE SURVEY
+% ==========================================
+\section{Literature Survey}\label{sec:lit}
+\subsection{Related Studies}
+Table~\ref{tab:lit} summarises 14 studies in six topic groups: (1) vulnerability prioritisation, (2) mapping CVEs to \ATTCK{} techniques, (3) cybersecurity knowledge graphs and link prediction, (4) retrieval-augmented generation and GraphRAG, (5) LLM agents that use tools, and (6) LLM assistants and benchmarks for threat intelligence. Each entry was checked against its abstract or results page; numbers in the table are quoted from those pages. Other studies on each topic exist; the table is a representative selection, not an exhaustive review.
+% Complete replacement for the whole \begin{table}...\end{table} block of Table~\ref{tab:lit} in Section 2.1.
+% Needs \usepackage{longtable} in the preamble (the table has 14 rows and does not fit on one page).
+{\footnotesize\setlength{\tabcolsep}{4pt}
+\begin{longtable}{>{\raggedright\arraybackslash}p{2.2cm}>{\raggedright\arraybackslash}p{3.5cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{2.7cm}>{\raggedright\arraybackslash}p{3.4cm}}
+\caption{Summary of related studies.}\label{tab:lit}\\ \toprule
+\textbf{Author (year)} & \textbf{Method} & \textbf{Dataset} & \textbf{Result} & \textbf{Limitation} \\ \midrule \endfirsthead
+\toprule \textbf{Author (year)} & \textbf{Method} & \textbf{Dataset} & \textbf{Result} & \textbf{Limitation} \\ \midrule \endhead
+\bottomrule \endfoot
+% Table body rows for Table~\ref{tab:lit}.  Columns: Author (year) & Method & Dataset & Result & Limitation
+% Every row was written from the abstract / results page that was opened (see lit_notes.md). Order = topic groups 1 to 6.
+% --- (1) vulnerability prioritisation ---
+Jacobs et al.~\cite{jacobs2023} (2023) & EPSS version 3: gradient-boosted model that gives every published CVE a probability of exploitation in the wild & 192,035 CVEs to end of 2022; exploitation observations from four sensor feeds (Fortinet, AlienVault OTX, Shadowserver, GreyNoise) & PR-AUC 0.7795; 0.051 for CVSS v3 base score & Scores single CVEs; not aimed at ATT\&CK links or multi-hop questions \\ \midrule
+Spring et al.~\cite{spring2019} (2019) & SSVC: decision trees, tailored to different vulnerability-management communities, that avoid some shortcomings of CVSS & Not a data study (SEI report) & Proposes a testable categorisation instead of a score & Decision framework; no automatic retrieval or question answering \\ \midrule
+% --- (2) CVE to ATT&CK mapping ---
+Abdeen et al.~\cite{abdeen2023} (2023) & SMET: BERT trained with a Siamese network for the similarity of attack actions, plus logistic regression, maps CVE text to ATT\&CK techniques & CVE entries and ATT\&CK techniques (sizes not stated in the abstract) & Reported to outperform other state-of-the-art models & Text similarity only; no knowledge graph, no question answering \\ \midrule
+H{\o}st et al.~\cite{host2025} (2025) & TRIAGE: LLM prompted with the rules of MITRE's CVE mapping methodology, combined with in-context learning from labelled CVEs & 296 KEV CVEs with 806 ATT\&CK mappings; 80/20 split by CVE & Test MAP 0.60, Recall@10 0.72 (SMET: 0.21, 0.43) & Weak on secondary impacts (authors); small data set; preprint under review \\ \midrule
+% --- (3) cybersecurity knowledge graphs and link prediction ---
+Shi et al.~\cite{shi2023} (2023) & Knowledge graph of CVE, CWE and CPE records; TransE, DistMult and ComplEx predict missing links, closed-world and open-world & CVE, CWE, CPE snapshots 2021--2022; 566,279 triples in the first & TransE best; CVE$\rightarrow$CPE Hits@10 0.606 (closed world) & Links between CVE, CWE and CPE, not ATT\&CK techniques; no question answering \\ \midrule
+Simoni et al.~\cite{simoni2025} (2025) & TITAN: a small language model plans a relation path from the question; a graph executor runs it on a graph derived from ATT\&CK & TITAN data set: 88,209 questions; graph with 2,350 nodes and 48,795 edges & Chain-of-thought planner beats a direct planner, most on long paths & Reported comparison is planner against planner; graph from ATT\&CK only \\ \midrule
+% --- (4) RAG and GraphRAG ---
+Lewis et al.~\cite{lewis2020} (2020) & RAG: pre-trained seq2seq model combined with a dense index of Wikipedia text, reached by a neural retriever & Wikipedia; open-domain question answering tasks & State of the art on three open-domain QA tasks & Retrieves text passages; no graph structure, general domain \\ \midrule
+Edge et al.~\cite{edge2024} (2024) & GraphRAG: an LLM builds an entity graph from text and summaries of its communities; partial answers are combined & Text corpora of about one million tokens & Better than conventional RAG in comprehensiveness and diversity & Graph built from text for summarisation questions, scored on comprehensiveness, not exact answers \\ \midrule
+Peng et al.~\cite{peng2024} (2024) & Survey: GraphRAG as graph-based indexing, graph-guided retrieval and graph-enhanced generation & Not applicable (survey) & Overview of methods, tasks, evaluation and applications & A survey; no experiments of its own \\ \midrule
+% --- (5) LLM agents with tools ---
+Yao et al.~\cite{yao2023} (2023) & ReAct: the LLM interleaves reasoning steps and actions, e.g.\ queries to a Wikipedia API & HotpotQA, FEVER, ALFWorld, WebShop & Less hallucination on HotpotQA and FEVER; beats imitation and RL on ALFWorld, WebShop & Wikipedia and simulated tasks; no security knowledge graph \\ \midrule
+% --- (6) LLM assistants and benchmarks for threat intelligence ---
+Simoni et al.~\cite{simoni2024} (2024) & MoRSE: chatbot with two RAG systems and parallel retrievers over MITRE, CVE, Metasploit and ExploitDB texts & 600 expert-checked questions: 150 general, 150 multi-hop, 300 CVE & Multi-hop correctness 0.70 against 0.62 for GPT-4; CVE accuracy 84\,\% against 34\,\% & Document retrieval; compared with GPT-4 and Mixtral, not with graph retrieval or an agent \\ \midrule
+Krishna~\cite{krishna2024} (2024) & AttackQA: Q\&A data set from ATT\&CK; fine-tuned embedding model and LLM for RAG & 25,335 question--answer pairs from ATT\&CK & Fine-tuned Llama 3 8B with tuned embeddings beats GPT-4o & Single source (ATT\&CK); no CVE, KEV or EPSS data \\ \midrule
+Alam et al.~\cite{alam2024} (2024) & CTIBench: five tasks (multiple choice, CVE$\rightarrow$CWE, CVSS prediction, ATT\&CK technique extraction, actor attribution) & 2,500 questions; 1,000 CVEs each for two tasks; 50 reports & GPT-4 best on all tasks except CVSS prediction; 71.0\,\% on multiple choice & Tests the LLM alone on single-step tasks; none of the five tasks is a multi-hop question over linked records \\ \midrule
+Zhao et al.~\cite{zhao2024} (2024) & CyberRAG: retrieves course documents, then checks the answer against a knowledge-graph ontology (AISecKG) & CyberQ: about 4,000 questions from cybersecurity course material & BERTScore up to 0.946 on in-knowledge-base questions & Education questions; the graph validates answers instead of supplying multi-hop evidence \\
+\end{longtable}}
+\subsection{Research Gap}
+Among the studies reviewed, work on vulnerability prioritisation (EPSS, SSVC) scores or categorises single CVEs, and work on mapping CVEs to \ATTCK{} (SMET, TRIAGE) predicts techniques from the text of a CVE; none of them answers questions that combine several records. The knowledge-graph studies predict links between CVE, CWE and CPE records~\cite{shi2023} or run relation paths over a graph derived from \ATTCK{} alone~\cite{simoni2025}; neither joins NVD, KEV, EPSS and CVE-to-\ATTCK{} data in one graph. The question-answering systems and benchmarks for security (MoRSE, AttackQA, CyberRAG, CTIBench) rely on document retrieval, in one case with an ontology check on the answer, or on the knowledge of the language model itself. In the studies we read, none compares plain RAG, GraphRAG and a tool-using agent with the same language model on questions whose gold answers are computed from a graph, and none uses a link-prediction model to fill missing CVE-to-\ATTCK{} links for a deployed analyst. This report addresses that combination. \TODO{The statement is limited to the 14 studies in Table~\ref{tab:lit}; the literature search was not exhaustive, so keep the words ``among the studies reviewed''.}
+
+% ==========================================
+% 3  DATASET DESCRIPTION
+% ==========================================
+\section{Dataset Description}
+\subsection{Dataset Source}
+Six public sources are combined (Table~\ref{tab:sources}).
+\begin{table}[H]\centering\caption{Data sources.}\label{tab:sources}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{3.6cm}}
+\toprule
+\textbf{Source} & \textbf{Content used} & \textbf{Used for} \\ \midrule
+NVD (CVE API 2.0) & CVE records: description, CVSS, weaknesses, affected products (CPE) & CVE and product nodes \\
+MITRE \ATTCK{} v20.1 (enterprise) & tactics, techniques, sub-techniques, mitigations, groups, software & \ATTCK{} nodes, \texttt{uses}, \texttt{mitigates} \\
+CISA KEV & CVEs known to be exploited, date added, ransomware use & KEV flag \\
+FIRST EPSS & probability of exploitation in the next 30 days & EPSS score \\
+CTID CVE-to-\ATTCK{} mappings & expert links CVE $\rightarrow$ technique with a role & \texttt{maps\_to} edges, labels for link prediction \\
+MITRE CWE; CISA-ADP SSVC & weakness catalogue; SSVC ``exploitation'' decision point & weakness nodes; one extra CVE attribute \\
+\bottomrule
+\end{tabularx}
+\end{table}
+Table~\ref{tab:snapshots} gives the version or snapshot date of every source, as printed by the download blocks of the notebook.
+\begin{table}[H]\centering\caption{Versions and snapshot dates of the data sources.}\label{tab:snapshots}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}X}\toprule
+\textbf{Source} & \textbf{Version or snapshot} \\ \midrule
+NVD (CVE API 2.0) & snapshot of 2026-11-15; 425,790 CVEs in the NVD on that date; 10,087 distinct CVE records downloaded (11 MB) \\
+MITRE \ATTCK{} Enterprise & version 20.1: 227 techniques, 479 sub-techniques, 15 tactics, 178 groups, 842 software entries, 44 mitigations \\
+CISA KEV & catalogue version 2026.11.13: 1,781 CVEs added between 2021-11-03 and 2026-11-13; 361 with known ransomware use \\
+FIRST EPSS & model version v2026.06.15, scores of 2026-11-14 for 406,543 CVEs \\
+CTID mappings & two files (a general CVE-to-\ATTCK{} mapping and a mapping of KEV CVEs): 2,889 rows, of which 2,840 are usable after cleaning; 1,208 CVEs and 192 techniques; roles of the link: primary impact 823, uncategorised 773, exploitation technique 709, secondary impact 535 \\
+MITRE CWE & catalogue of 984 entries with 1,106 parent links \\ \bottomrule
+\end{tabularx}
+\end{table}
+\paragraph{Which CVEs were selected.} The NVD holds 425,790 CVEs, far more than the language model and a free notebook can handle in a benchmark, so the data set is a selection and not a random sample. It contains (i) all 1,781 CVEs of the KEV catalogue, (ii) all 1,208 CVEs that have an expert \ATTCK{} mapping (592 of them are also in KEV; together 2,397 distinct CVEs), and (iii) all CVEs that NVD lists for 24 widely used products (for example Apache HTTP Server, OpenSSL, MySQL, PHP, WordPress, GitLab, Jenkins and Fortinet FortiOS; the Linux kernel with 19,744 CVEs and Windows Server 2019 with 6,817 CVEs were skipped as too large). The download gave 10,278 raw records for 10,087 distinct CVEs; one rejected CVE was dropped, which leaves \textbf{10,086 CVEs}. As a consequence, 17.7\,\% of the CVEs (1,781 of 10,086) are in KEV and 12.0\,\% have an expert mapping; both shares are much higher than in the NVD as a whole, and the findings describe this graph and not the NVD in general. Figure~\ref{fig:nvdyear} shows how fast the NVD grows.
+\fig{fig_nvd_cves_per_year}{CVEs published per year in the NVD (snapshot 2026-11-15; the count for 2026 is for the year so far).}{fig:nvdyear}
+\subsection{Dataset Features}
+Every CVE is one row of a table with the fields of Table~\ref{tab:fields}. The CVSS fields come from the first available metric in the order v3.1, v4.0, v3.0, v2 (the NVD ``primary'' score is preferred over a vendor score); the version used was v3.1 for 6,514 CVEs, v2 for 2,437, v3.0 for 1,133 and v4.0 for 2. The affected products are the CPE entries marked as vulnerable; entries that only name a platform on which the software runs are kept separately.
+\begin{table}[H]\centering\caption{Fields of the CVE table and their missing values (Block~14b output).}\label{tab:fields}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}X}\toprule
+\textbf{Field} & \textbf{Source} & \textbf{Missing values} \\ \midrule
+CVE id, publication date, English description & NVD & none (no description missing, none in another language) \\
+CVSS base score, severity, attack vector, attack complexity & NVD & none \\
+privileges required, user interaction & NVD (CVSS v3/v4) & 2,437 (24.2\,\%): the CVEs that only have a CVSS v2 score \\
+weakness ids (CWE) & NVD & 4 (0.0\,\%); a further 2,471 CVEs carry only the placeholders \texttt{NVD-CWE-Other} or \texttt{NVD-CWE-noinfo} \\
+affected products (CPE) & NVD & 3 (0.0\,\%) \\
+EPSS score and percentile & FIRST & none \\
+KEV date added, ransomware use & CISA & 8,305 (82.3\,\%): the CVEs that are not in KEV \\
+SSVC exploitation, automatable, technical impact & CISA-ADP via NVD & 4,826 (47.8\,\%): no SSVC decision published \\ \bottomrule
+\end{tabularx}
+\end{table}
+\timg{table_dataset_composition}{Composition of the dataset.}{tab:composition}
+\subsection{Target Variable}
+Two targets are used. (i) For link prediction, the target is the set of \ATTCK{} techniques that the expert mapping assigns to a CVE (multi-label, 706 possible techniques). (ii) For question answering, the target is the gold answer of each benchmark question (Section~\ref{sec:benchmark}).
+\subsection{Dataset Statistics}
+The resulting knowledge graph has 18,661 nodes and 68,250 edges (Tables~\ref{tab:nodes} and~\ref{tab:edges}).
+\begin{table}[H]\centering\caption{Node types of the knowledge graph.}\label{tab:nodes}
+\begin{tabular}{lr}\toprule \textbf{Node type} & \textbf{Count} \\ \midrule
+CVE & 10,086 \\ Product & 6,386 \\ Weakness (CWE) & 404 \\ Technique (incl.\ sub-techniques) & 706 \\ Tactic & 15 \\ Group & 178 \\ Software & 842 \\ Mitigation & 44 \\ \midrule \textbf{Total} & \textbf{18,661} \\ \bottomrule\end{tabular}
+\end{table}
+\begin{table}[H]\centering\caption{Edge types of the knowledge graph.}\label{tab:edges}
+\begin{tabular}{llr}\toprule \textbf{Relation} & \textbf{Meaning} & \textbf{Count} \\ \midrule
+\texttt{affects} & CVE lists the product as vulnerable & 34,300 \\ \texttt{requires\_platform} & CVE applies only on this platform & 1,808 \\ \texttt{has\_weakness} & CVE $\rightarrow$ CWE & 8,449 \\
+\texttt{maps\_to} & CVE $\rightarrow$ technique (expert mapping) & 2,819 \\ \texttt{in\_tactic} & technique $\rightarrow$ tactic & 881 \\ \texttt{subtechnique\_of} & sub-technique $\rightarrow$ technique & 479 \\
+\texttt{uses} & group or software $\rightarrow$ technique & 17,589 \\ \texttt{mitigates} & mitigation $\rightarrow$ technique & 1,477 \\ \texttt{child\_of} & CWE hierarchy & 448 \\ \midrule \textbf{Total} & & \textbf{68,250} \\ \bottomrule\end{tabular}
+\end{table}
+\fig{fig_graph_schema}{Schema of the knowledge graph.}{fig:schema}
+Of the 10,086 CVEs, 7,611 have at least one real CWE id, 10,083 have at least one vulnerable product (202,365 product rows in all), and 1,207 have an expert \ATTCK{} mapping (2,819 CVE-to-technique links, 2.34 techniques per labelled CVE on average, 192 different techniques out of 706 in the graph). Publication dates range from 1996-02-25 to 2026-11-12. NVD marks 7,207 records as ``Modified'', 2,874 as ``Analyzed'' and 5 as ``Undergoing Analysis''. The dataset-composition table (Table~\ref{tab:composition}) shows how complete each field is in five subsets (KEV, labelled, both, product-focused only, and all CVEs).
+
+% ==========================================
+% 4  EDA
+% ==========================================
+\section{Exploratory Data Analysis}
+\subsection{Dataset Structure}
+The data set consists of the CVE table (Table~\ref{tab:fields}), a table of CVE--weakness pairs, a table of CVE--product pairs, the ATT\&CK tables and the expert mapping; Figure~\ref{fig:schema} shows how they are joined in the knowledge graph. Figure~\ref{fig:subgraph} shows the neighbourhood of one CVE as an example: the CVE is linked to the products it affects, to its weaknesses and, through the expert mapping, to techniques, which in turn lead to tactics, mitigations and groups.
+\fig{fig_graph_example_subgraph}{Example neighbourhood of one CVE in the knowledge graph.}{fig:subgraph}
+\subsection{Descriptive Statistics}
+Table~\ref{tab:describe} gives the descriptive statistics of the numeric fields. The CVSS base score is centred around 6.5 (mean 6.64, standard deviation 1.92). EPSS is strongly skewed: the mean is 0.153 but the median only 0.025, so most CVEs have a low probability of exploitation and a small group has a very high one. References per CVE (mean 14.2, median 6, maximum 606) and affected products per CVE (mean 3.4, median 1, maximum 400) are also heavily skewed. Most CVEs have one weakness (mean 1.15). The median publication year is 2020; the data set reaches back to 1996.
+\timg{table_eda_describe}{Descriptive statistics of the numeric CVE fields.}{tab:describe}
+\fig{fig_dataset_cvss_hist}{Distribution of CVSS base scores.}{fig:cvss}
+\fig{fig_dataset_pub_year}{CVEs by publication year.}{fig:pubyear}
+\subsection{Missing Value Analysis}
+Table~\ref{tab:missing} and Figure~\ref{fig:missing} show the share of missing values per field. The CVSS base score, the severity, the attack vector, the attack complexity, the EPSS score and the description have no missing values. The two fields \texttt{privileges\_required} and \texttt{user\_interaction} are missing for 24.2\,\% of the CVEs because these CVEs only have a CVSS v2 score, which does not define them (this was confirmed: all 2,437 CVEs without a privileges-required value are scored with v2 only). The KEV fields are missing for the 82.3\,\% of CVEs that are not in the catalogue, which means ``not listed'' and not ``unknown'', and the SSVC fields are missing for 47.8\,\% because no decision has been published for them.
+\timg{table_eda_missing}{Missing values per field.}{tab:missing}
+\figs{fig_eda_missing_values}{Share of missing values per field.}{fig:missing}
+\subsection{Label Distribution}
+Of the 10,086 CVEs, 1,207 (12.0\,\%) have an expert mapping with 2,819 CVE-to-technique links (Figure~\ref{fig:labelcov}); a labelled CVE has 2.34 techniques on average (Figure~\ref{fig:techpercve}). The labels have a long tail (Figures~\ref{fig:toptech} and~\ref{fig:lptechfreq}): 192 techniques occur at least once, 63 of them (33\,\%) in exactly one CVE, while the ten most frequent techniques account for 58\,\% of all links and eight techniques for half of them. By tactic, Initial Access (650 links), Execution (639), Privilege Escalation (320) and Stealth (286) are the most common (Figure~\ref{fig:lptactic}). This imbalance matters for link prediction: a model that always proposes the most frequent techniques already scores well at small $k$, which is why a popularity baseline is used throughout.
+\fig{fig_graph_label_coverage}{Share of CVEs with an expert CVE-to-\ATTCK{} mapping.}{fig:labelcov}
+\fig{fig_graph_techniques_per_cve}{Number of \ATTCK{} techniques per labelled CVE.}{fig:techpercve}
+\fig{fig_graph_top_techniques}{Most frequent techniques in the expert mapping.}{fig:toptech}
+\fig{fig_lp_technique_frequency}{Frequency of the 192 techniques in the labelled CVEs (long-tailed).}{fig:lptechfreq}
+\fig{fig_lp_labels_by_tactic}{Number of CVE-to-technique links by tactic.}{fig:lptactic}
+\subsection{Univariate Analysis}
+The severity of the CVEs is mostly medium (4,917) and high (3,532), with 1,149 critical and 488 low ones (Figure~\ref{fig:severity}); 8,732 CVEs are exploitable over the network, 1,097 locally, 222 from an adjacent network and 35 physically. Figure~\ref{fig:topcwe} lists the weaknesses that occur most often. The knowledge graph has 7.31 edges per node on average, but the degree is very uneven (Figure~\ref{fig:degree}): the median CVE has degree 3, the median product degree 1, but the largest hubs are products such as gitlab (1,507 CVEs), oracle mysql (1,328), debian linux (965) and php (760), and the weakness ``Improper Neutralization of Input During Web Page Generation'' (708). Weakly connected, the graph has 13 components, and the largest one holds 99.8\,\% of the nodes; between two random nodes of the main component there are 4.75 hops on average, and only 9\,\% of the pairs are within three hops, which is why a three-hop question cannot be answered by looking at the immediate neighbours of a node.
+\fig{fig_dataset_severity}{CVEs by severity class.}{fig:severity}
+\fig{fig_dataset_top_cwe}{Most frequent weakness types (CWE).}{fig:topcwe}
+\fig{fig_graph_degree_ccdf}{Degree distribution of the knowledge graph.}{fig:degree}
+\subsection{Bivariate and Correlation Analysis}
+CVSS and EPSS are only moderately related (Spearman rank correlation $+0.36$ over 10,086 CVEs; Figure~\ref{fig:cvssepss}): the severity of a flaw says little about whether it is exploited. KEV and EPSS are related much more strongly: the median EPSS of a KEV CVE is 0.533 against 0.019 for the others (Figure~\ref{fig:epsskev}), which is also why EPSS and KEV are left out of the link-prediction features. In the correlation matrix (Figure~\ref{fig:corr}) the strongest relations are between the number of references and the publication year ($-0.61$; newer CVEs have fewer references), the number of references and EPSS ($+0.53$ with EPSS on a log scale), KEV membership and EPSS ($+0.49$) and KEV membership and the CVSS score ($+0.43$).
+\fig{fig_eda_cvss_vs_epss}{CVSS base score against EPSS score.}{fig:cvssepss}
+\fig{fig_eda_epss_by_kev}{EPSS score of CVEs in the KEV catalogue and of the others.}{fig:epsskev}
+\fig{fig_eda_correlation}{Correlation matrix of the numeric CVE features.}{fig:corr}
+\subsection{Outlier Analysis}
+The outliers are of two kinds. A few CVEs are extreme in size: one CVE has 606 references and one affects 400 products. A few products are extreme in the number of CVEs, mostly operating systems and large platforms (Figure~\ref{fig:topprod}). We keep them because they are real, and they matter for the questions: a product stack with a big product contains many CVEs, so questions on it need aggregation (counting, intersecting, ranking) and not just a look-up. Of the products, 369 are usable in stack questions and 384 in counting questions (those with between 5 and 200 KEV CVEs).
+\fig{fig_dataset_top_products}{Products with the most CVEs.}{fig:topprod}
+
+% ==========================================
+% 5  PREPROCESSING
+% ==========================================
+\section{Data Preprocessing and Knowledge-Graph Construction}
+\subsection{Data Cleaning}
+The raw NVD records (10,278 records read from the downloaded files) were parsed into one row per CVE and two side tables, one for weaknesses and one for vulnerable products. The following rules were applied.
+\begin{itemize}[noitemsep, topsep=2pt]
+    \item \textbf{Duplicates:} 191 duplicate records (the same CVE downloaded by several queries) were merged and one rejected CVE was dropped, leaving 10,086 CVEs.
+    \item \textbf{Description:} the English description is used; none is missing.
+    \item \textbf{CVSS:} when a CVE has several scores, the first available version in the order v3.1, v4.0, v3.0, v2 is used, and within a version the NVD ``primary'' score is preferred to a vendor score.
+    \item \textbf{Products:} only CPE entries flagged \texttt{vulnerable} count as affected products. Entries that only name the platform on which the software runs form a separate relation (\texttt{requires\_platform}). This matters: for WordPress, 357 of the 585 CVEs returned by an NVD query have WordPress itself as the vulnerable part, and in the other 228 a plugin or theme is vulnerable and WordPress is only the platform (the sum matches the NVD count exactly). A product node is the vendor and the product name of the CPE name joined by a space, for example \texttt{microsoft windows server 2016}.
+    \item \textbf{KEV, EPSS, SSVC:} joined by CVE id; the KEV information held in the NVD record agrees with the CISA catalogue for all 1,781 KEV CVEs, including the date of addition.
+    \item \textbf{Expert mappings:} of the 2,889 rows, 26 rows on industrial-control-system techniques and 23 rows whose technique id is not in the Enterprise matrix were dropped, and 12 revoked technique ids were replaced by their successor ids, which leaves 2,840 usable rows.
+\end{itemize}
+\subsection{Missing Value Handling}
+No value was imputed. A missing value is either a real ``not listed'' (KEV fields for the CVEs outside the catalogue), a field that the scoring version does not define (privileges required and user interaction for CVSS v2) or a decision that has not been published (SSVC); guessing a value would add information that the sources do not contain. The three signals that rank CVEs for patching are complete: every CVE has a CVSS score (v3.1 for 6,514 CVEs, v2 for 2,437, v3.0 for 1,133, v4.0 for 2) and an EPSS score. Four CVEs without a weakness row and three without a product are kept in the graph; a CVE with only a placeholder weakness is treated as a CVE without a known weakness.
+\subsection{Knowledge-Graph Construction}
+The graph was built from the cleaned tables with typed nodes and typed edges (Tables~\ref{tab:nodes} and~\ref{tab:edges}); node identifiers carry a prefix for their type (\texttt{cve:}, \texttt{prod:}, \texttt{cwe:}, \texttt{tech:}, \texttt{tactic:}, \texttt{group:}, \texttt{sw:}, \texttt{mit:}). The weakness nodes are the 364 weaknesses that CVEs use plus 40 of their ancestors in the CWE hierarchy; 13 CWE ids used by CVEs are not in the MITRE catalogue (for example CWE-16 and CWE-264) and have no parent links. Three expert-mapping rows were dropped because their CVE or technique is not in the graph. Eleven integrity checks all passed: node ids are unique; there are no duplicate edges, no self-loops and no dangling edges; every edge connects a combination of node types that the schema allows; every sub-technique points to its parent technique; every technique belongs to at least one tactic; every labelled CVE has a \texttt{maps\_to} edge; every KEV CVE is a node; no label information is stored in CVE attributes (labels live only in the \texttt{maps\_to} edges); and all node types are known. The graph has 13 weakly connected components; the largest contains 18,620 of the 18,661 nodes.
+\subsection{Feature Engineering}
+A CVE is described by 617 numeric features in five groups (Table~\ref{tab:lpfeatures}): TEXT, a 384-dimensional embedding of the description made with \texttt{BAAI/bge-small-en-v1.5}~\cite{xiao2023} (unit-length vectors); CWE, 89 columns (indicators for the 88 weaknesses that occur in at least 15 CVEs and a ``no CWE'' flag; 94\,\% of the CVEs have at least one kept weakness); CVSS, 33 columns (the base score and the components of the CVSS vector); VENDOR, 103 columns (vendor indicators; the 100 most frequent vendors cover 92\,\% of the CVEs); and META, 8 columns (publication year, indicators for exploit, patch and vendor-advisory references, and the logarithms of the number of references, products, weaknesses and description words). KEV, EPSS and SSVC fields and everything derived from the labels were left out on purpose, because they either leak the answer or describe exploitation, which is not the same as the technique; an automatic check confirms that no such column is present.
+\timg{table_lp_features}{Feature groups used for link prediction.}{tab:lpfeatures}
+\subsection{Feature Selection}
+The five feature groups were compared in an ablation on the validation CVEs (Section~\ref{sec:featabl}): the models were trained with all groups, with one group removed and with one group alone, so that the contribution of each group can be seen. No automatic selection of single columns was used.
+\subsection{Train--Validation--Test Split}
+\paragraph{Link prediction.} The 1,207 labelled CVEs were split at random (seed 42) into 70\,\% training, 15\,\% validation and 15\,\% test, and a CVE was placed with \emph{all} its labels in exactly one split (``cold start''): the model must predict techniques for CVEs it has never seen, as it would for a new CVE without a mapping. Table~\ref{tab:lpsplit} gives the sizes. A model that can only predict techniques seen in training can reach at most 99\,\% recall on the test links.
+\timg{table_lp_split}{Cold-start split of the labelled CVEs.}{tab:lpsplit}
+\paragraph{Question answering.} The 108 benchmark questions are split into 36 development and 72 test questions (four and eight per question type). Design decisions were made on the development questions; the test questions were answered once with frozen settings.
+\subsection{Feature Scaling}\label{sec:prep}
+All models use the same feature preparation, which is fitted on the fitting rows only (training rows when tuning, training plus validation rows for the final models). The TEXT and META columns are centred on the mean of the fitting rows and the META columns are divided by their standard deviation; the CVSS base score is divided by 10. Then every feature group is divided by the root of its mean squared row length, so that each of the five groups has the same average length (``every group gets the same total weight''), and groups can be given a weight. The kNN model uses a text weight of 1 or 2 for the TEXT group; the other models use a weight of 1.
+
+% ==========================================
+% 6  METHODOLOGY
+% ==========================================
+\section{Methodology}
+\subsection{Overall Workflow}
+Figure~\ref{fig:workflow} shows the workflow. Public data are collected, cleaned and integrated into a knowledge graph, and the graph is checked. Two tasks use the same graph. In the question-answering task a benchmark of 108 questions is generated from the graph, three systems answer them with the same language model, and the settings are fixed on the development questions before the test questions are answered once. In the link-prediction task, features are made for every CVE, the labelled CVEs are split by CVE, five models and a baseline are tuned on the validation CVEs and evaluated once on the test CVEs. Both results feed a Streamlit application.
+\fig{fig_workflow}{Overall workflow of the project.}{fig:workflow}
+\subsection{The Multi-Hop Question Benchmark}\label{sec:benchmark}
+The benchmark has 108 questions: nine question types with 12 questions each (Table~\ref{tab:bench}). Every gold answer is computed from the graph by code and re-checked by an independent traversal. Questions are split into 36 development and 72 test questions (four and eight per type). Product stacks are random combinations of products, not real deployments.
+\begin{table}[H]\centering\caption{Question types of the benchmark.}\label{tab:bench}
+\begin{tabularx}{\textwidth}{llXl}\toprule
+\textbf{ID} & \textbf{Hops} & \textbf{Question type} & \textbf{Answer} \\ \midrule
+A1 & 1 & \ATTCK{} techniques mapped to a CVE & set of techniques \\
+A2 & 1 & number of KEV CVEs of a product & integer \\
+B1 & 2 & tactics reachable via a CVE & set of tactics \\
+B2 & 2 & mitigations for the techniques of a CVE & set of mitigations \\
+B3 & 2 & groups that use \emph{all} techniques of a CVE & set of groups \\
+C1 & 3 & tactics reachable via a product stack & set of tactics \\
+C2 & 3 & top-3 groups for a stack, ranked by technique overlap & ranked list \\
+C3 & 3 & KEV CVEs of a stack that map to a given tactic & set of CVEs \\
+D1 & 1 & top-3 CVEs of a stack to patch first (KEV, then EPSS, then CVSS) & ranked list \\ \bottomrule
+\end{tabularx}
+\end{table}
+\paragraph{Worked example.} Question B1-01 reads: ``Through which ATT\&CK tactics can an attacker use the techniques that CVE-2023-44487 is mapped to? List all tactics.'' The graph maps this CVE to the techniques T1190 (Exploit Public-Facing Application) and T1499 (Endpoint Denial of Service); these belong to the tactics TA0001 (Initial Access) and TA0040 (Impact), so the gold answer is \texttt{[TA0001, TA0040]}. The question needs two hops (CVE $\rightarrow$ technique $\rightarrow$ tactic) and the union of the results. A harder example is a type-D1 question: for a stack of two named products, list the three CVEs to patch first, where KEV CVEs come first, then the higher EPSS score (compared at four decimals), then the higher CVSS score; this needs the CVEs of both products, a filter, and a three-key sort.
+\subsection{Model Development Strategy}
+Design choices (retrieval settings, context budgets, agent instructions) were made on the 36 development questions only. The 72 test questions were answered once, with frozen settings. All three systems use the same LLM, \texttt{gpt-oss-20b} run locally, so that they differ only in what evidence they give to the model.
+\subsection{Hyperparameter Tuning Procedure}
+The procedure of the course guide was followed for every link-prediction model. (1) The model is trained with default parameters on the training CVEs and scored on the validation CVEs. (2) The parameters are modified: a small search space is defined, every setting is trained on the training CVEs and scored on the validation CVEs with the selection metric NDCG@10. (3) The setting with the highest validation score is kept, and the final model is fitted again with that setting on the training and validation CVEs. (4) The final model is evaluated once on the test CVEs. Logistic regression, kNN, the SVM and the random forest were tuned by grid search over 6, 24, 6 and 8 settings; the MLP, which has the largest space (32 combinations), by random search over 16 of them. The search spaces are in Table~\ref{tab:lptuning}. The question-answering systems have no trained parameters; their settings (the retrieval method and the number of chunks, the context budget, the agent instructions) were chosen on the development questions in the same way.
+\subsection{Evaluation Metrics}
+\paragraph{Question answering.} Each answer is parsed from the JSON object that the model returns and compared with the gold answer. A set answer (techniques, tactics, mitigations, groups, CVEs) is scored with the F1 value of the predicted against the gold set; a ranked answer (top-3 questions) is scored with the overlap of the predicted and the gold top three (the share of the three that is correct); a count is scored 1 if it is exactly right and 0 otherwise. An answer counts as \emph{exactly right} if the set is identical, the ranked list is identical in content and order, or the count is equal. Further measures are the number of empty answers, the number of invented identifiers (identifiers that are not in the graph), the prompt tokens, the number of LLM calls and the seconds per question. All averages come with 95\,\% bootstrap intervals over questions (2,000 resamples); systems are compared on the same questions with paired differences.
+
+\paragraph{Link prediction.} For every CVE a model gives all techniques a score, and the techniques are sorted by score. Let $T_c$ be the true techniques of CVE $c$ and $\mathrm{rank}_c(t)$ the position of technique $t$ in the list. With $C$ the set of CVEs:
+\begin{align*}
+\mathrm{Hits@}k &= \tfrac{1}{|C|}\textstyle\sum_{c}\mathbb{1}\big[\min_{t\in T_c}\mathrm{rank}_c(t)\le k\big], &
+\mathrm{MRR} &= \tfrac{1}{|C|}\textstyle\sum_{c}\frac{1}{\min_{t\in T_c}\mathrm{rank}_c(t)},\\
+\mathrm{DCG@}k &= \textstyle\sum_{i=1}^{k}\frac{\mathrm{rel}_i}{\log_2(i+1)}, &
+\mathrm{NDCG@}k &= \tfrac{1}{|C|}\textstyle\sum_{c}\frac{\mathrm{DCG@}k}{\mathrm{IDCG@}k},
+\end{align*}
+where $\mathrm{rel}_i=1$ if the technique at position $i$ is true and $\mathrm{IDCG@}k$ is the DCG of a perfect list. Average precision of a CVE is $\frac{1}{|T_c|}\sum_{t\in T_c}\mathrm{precision}(\mathrm{rank}_c(t))$ and MAP is its mean. Precision@3 is the share of the three predicted techniques that are true and recall@3 the share of the true techniques that are among the three (both pooled over all CVEs, ``micro''), and F1@3 is their harmonic mean. For the area under the ROC curve (ROC-AUC) and under the precision--recall curve (PR-AUC) every pair of a CVE and a technique is treated as one binary decision with the model score as its score (micro average); a macro ROC-AUC averages the area over the techniques that have both positive and negative test CVEs. True links to a technique that the model has never seen cannot be found; they count as misses in all measures. Accuracy is reported only for completeness (Section~\ref{sec:confusion}), because almost all pairs are true negatives. Intervals are 95\,\% bootstrap intervals over the test CVEs (2,000 resamples).
+
+% ==========================================
+% 7  PROPOSED SYSTEM AND MODEL ARCHITECTURE
+% ==========================================
+\section{Proposed System and Model Architecture}
+\subsection{System Architecture}
+Figure~\ref{fig:architecture} shows the architecture. A question first goes to the system that is selected (in the experiments, all three answer every question). Plain RAG searches the text of the graph; GraphRAG and the agent first link the entities of the question (CVE ids, product names) to graph nodes. The language model is the same for all three, and every answer comes with its evidence: the retrieved passages, the graph facts, or the tool calls with their results. The link-prediction model works separately: its scores for all CVEs are stored in a file and shown in the predictor tab of the application.
+\fig{fig_architecture}{Architecture of the proposed system.}{fig:architecture}
+\subsection{Plain RAG (Baseline)}
+Every graph node is written as a short text page (18,661 pages) and cut into 23,427 chunks (target size at most about 200 words; actual mean 77 words, longest 313; the page title is repeated in every chunk). A check confirms that all 68,250 graph edges are stated in the text of both of their pages and that no chunk is empty, so the text contains exactly the facts of the graph. Retrieval is hybrid: BM25 (an own sparse implementation that keeps identifiers such as CVE-2021-44228 as single tokens) and dense retrieval with \texttt{BAAI/bge-small-en-v1.5} are fused by reciprocal rank fusion ($k=60$). The top 20 chunks, capped at about 3,500 tokens, are given to the LLM together with the question.
+The retrieval was measured directly, without a language model: for every benchmark question, what share of the facts needed for the gold answer is present in the retrieved chunks (``evidence recall''). With the top 10 chunks of the hybrid search the evidence recall is 54\,\% for one-hop questions, 5\,\% for two-hop questions and 12\,\% for three-hop questions, and all needed facts are present for 33\,\%, 3\,\% and 6\,\% of the questions (Figure~\ref{fig:ragrecall}, Table~\ref{tab:ragretrieval}). The entity page itself is found for 58\,\% of the one-hop and 56\,\% of the three-hop questions but for none of the two-hop questions. At the same context size BM25 reached an evidence recall of 25\,\%, dense search 11\,\% and hybrid search 23\,\% (Figure~\ref{fig:ragcomp}). On the 32 development questions that were used to choose the retrieval setting, hybrid search with 20 chunks had the best evidence recall (29.1\,\%), ahead of 10 chunks (21.0\,\%) and 5 chunks (15.6\,\%), so it was chosen. As a control, a question of type A1 (the answer sits on the page of the CVE itself) is answered completely if that page is given: with the CVE page as context all 12 A1 answers are fully contained.
+\fig{fig_rag_recall_by_type}{Share of the needed evidence found by plain-RAG retrieval, by question type.}{fig:ragrecall}
+\timg{table_rag_retrieval}{Retrieval diagnostics of the plain-RAG search on the 108 benchmark questions.}{tab:ragretrieval}
+\fig{fig_rag_retriever_comparison}{Evidence recall of keyword (BM25), dense and hybrid search at the same context size.}{fig:ragcomp}
+\fig{fig_rag_recall_vs_k}{Evidence recall of the hybrid search against the number of retrieved chunks.}{fig:ragk}
+\timg{table_rag_corpus}{The text corpus that plain RAG searches.}{tab:ragcorpus}
+\subsection{GraphRAG}
+The entities of the question (CVE identifiers, product names, tactic identifiers) are linked to graph nodes by exact matching (CVE regular expression; longest-first product-name matching with word boundaries). The neighbourhood of these entities is written as compact facts with fixed rules: a table of the 15 CVEs with the highest exploitation priority, a table of the CVEs that have an expert \ATTCK{} mapping with their techniques, a technique-to-tactic glossary, and for a single CVE a card with scores, techniques, mitigations and groups. The facts fit in the same context budget as plain RAG and the LLM is called once. The ordering of the priority table (KEV first, then EPSS, then CVSS) is the same rule that question type D1 states; this design prior favours GraphRAG on D1 and is tested in an ablation (Section~\ref{sec:ablation}).
+\subsection{Agentic GraphRAG}
+The agent receives six tools over the graph: \texttt{find\_product}, \texttt{neighbors} (follow one of ten named hops, with link counts and an optional intersection), \texttt{filter\_cves} (KEV, EPSS, CVSS, tactic), \texttt{sort\_cves}, \texttt{show} and \texttt{describe}. Each result is a numbered set that later calls can refer to, so large intermediate results never have to fit into the prompt. The agent calls tools one after another (at most eight LLM calls) and finally answers with a JSON object. A scripted check confirms that the ideal tool sequence reproduces the gold answer of all 108 questions, so the tool set itself is sufficient.
+Table~\ref{tab:tools} lists the tools. \texttt{neighbors} follows one of ten named hops (for example \texttt{product\_to\_cves}, \texttt{cve\_to\_techniques}, \texttt{technique\_to\_tactics}, \texttt{technique\_to\_mitigations}, \texttt{technique\_to\_groups}); when it starts from several items it reports for every result how many of the source items it is linked to and sorts by that number, and \texttt{min\_links="all"} keeps only results linked to every source item, which is the intersection needed by questions such as B3. Every tool checks its arguments, and a wrong call (for example a hop that needs CVEs applied to a set of products) returns an error message that the model can read and correct.
+\begin{table}[H]\centering\caption{The six graph tools of the agent.}\label{tab:tools}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.1cm}>{\raggedright\arraybackslash}X}\toprule
+\textbf{Tool} & \textbf{What it does} \\ \midrule
+\texttt{find\_product} & looks up a product by (part of) its name and returns matching product items \\
+\texttt{neighbors} & follows one hop from a set (e.g.\ product $\rightarrow$ CVEs, CVE $\rightarrow$ techniques, technique $\rightarrow$ tactics); optional link counts and intersection \\
+\texttt{filter\_cves} & keeps the CVEs of a set that are in KEV (or not), have a minimum EPSS or CVSS score, or reach a given tactic \\
+\texttt{sort\_cves} & sorts a set of CVEs by KEV, EPSS and CVSS and keeps the first $n$ \\
+\texttt{show} & shows more items of a set (paging, at most 60 at a time) \\
+\texttt{describe} & shows the details of single items (scores, techniques, names) \\ \bottomrule
+\end{tabularx}
+\end{table}
+A real trace from the test run shows the error handling. For question D1-06 the agent first called \texttt{neighbors} with the hop \texttt{cve\_to\_products} on the set S1, which holds products; the tool answered ``ERROR: this needs CVE items but S1 holds Product items'', and the agent then called the hop \texttt{product\_to\_cves}, which returned set S2 with 60 CVEs. (The final answer of this question was wrong, see Section~\ref{sec:strengths}.) The loop is shown in Figure~\ref{fig:agentloop}.
+\fig{fig_agent_loop}{The tool loop of the Agentic GraphRAG system.}{fig:agentloop}
+\subsection{Link-Prediction Models}
+The task is to rank \ATTCK{} techniques for a CVE that has no expert mapping. Each model receives the 617 features of a CVE (description embedding, CWE indicators, CVSS-vector components, vendor indicators and a few metadata columns) and gives every technique a score; the techniques are then sorted by score. A model can only score techniques that occur in its training labels: 179 techniques when it is trained on the training CVEs only, and 186 when the validation CVEs are added. The 1.4\,\% of the true test links whose technique has no training or validation CVE cannot be found by any model. Five model families are compared with a popularity baseline, which gives every CVE the techniques in the order of their frequency in the training labels: logistic regression, k-nearest neighbours, a support vector machine, a random forest and a multilayer perceptron (MLP). The MLP used during tuning maps 617 inputs through one hidden layer of 256 units to 179 outputs, which gives $(617\cdot 256 + 256) + (256\cdot 179 + 179) = 204{,}211$ trainable parameters; the final model has 186 outputs and 206{,}010 parameters. The MLP is a plain feed-forward network: a linear layer, a ReLU activation, dropout and a linear output layer with one output per technique (Figure~\ref{fig:mlp}); the output is a score and not yet a probability. It is trained with the Adam optimiser (batch size 64, at most 200 epochs when tuning) and, for the selected setting, a softmax loss: the target is the 0/1 vector of the CVE's techniques divided by its number of techniques, and the loss is the cross-entropy between this target and the softmax of the outputs. The alternative loss in the search space is the binary cross-entropy with logits (one independent decision per technique).
+\fig{fig_mlp_architecture}{Architecture of the multilayer perceptron for link prediction.}{fig:mlp}
+\iffull
+\subsection{Graph Neural Network}
+\TODO{[final-year version only] GraphSAGE / R-GCN encoder on the knowledge graph with the same cold-start split; architecture figure; comparison with the feature-based models.}
+\fi
+
+% ==========================================
+% 8  EXPERIMENTAL SETUP
+% ==========================================
+\section{Experimental Setup}
+\subsection{Hardware}
+The experiments ran on Google Colab (free tier) with files kept on Google Drive. The data blocks (download, parsing, graph, features, link prediction) ran on a CPU runtime; the language model and the text embeddings ran on an NVIDIA Tesla T4 GPU (16~GB). The 20-billion-parameter model occupies 12.8~GB and runs completely on the GPU at about 35 tokens per second. \TODO{CPU model and RAM were not printed by the notebook; add them from Colab (Runtime $\rightarrow$ View resources) if the guide asks for them.}
+\subsection{Software and Platform}
+Table~\ref{tab:software} lists the software. Versions are quoted from the output of the notebook.
+\begin{table}[H]\centering\caption{Software and platform.}\label{tab:software}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.2cm}>{\raggedright\arraybackslash}X}\toprule
+\textbf{Item} & \textbf{Version / use} \\ \midrule
+Python & 3.13.18 (Google Colab) \\
+pandas, NumPy, Matplotlib & 2.2.3, 2.4.6, 3.10.0 \\
+PyTorch & 2.14.1 (neural network of the link prediction) \\
+scikit-learn & version of the Colab image (logistic regression, SVM, random forest, metrics) \\
+sentence embeddings & \texttt{BAAI/bge-small-en-v1.5}~\cite{xiao2023} (384 dimensions) \\
+language model & \texttt{gpt-oss:20b}~\cite{openai2025} served by Ollama 0.40.16, context window 16,384 tokens; \texttt{gpt-oss-120b} on Groq only for one retrieval comparison on the development questions \\
+retrieval & own BM25~\cite{robertson2009} and reciprocal rank fusion~\cite{cormack2009} \\
+application & Streamlit 1.67.0, Graphviz for the evidence graph, Groq API for the live language model \\
+code hosting & GitHub; deployment on Streamlit Community Cloud \\ \bottomrule
+\end{tabularx}
+\end{table}
+\subsection{Parameter Settings}
+\begin{table}[H]\centering\caption{Main parameter settings.}\label{tab:params}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}X}\toprule
+\textbf{Parameter} & \textbf{Value} \\ \midrule
+LLM & gpt-oss-20b (Ollama), context window 16,384 tokens \\
+Decoding & temperature 0, reasoning effort ``low'' \\
+Plain RAG & chunks (target $\leq$ 200 words, mean 77); BM25 + bge-small-en-v1.5; RRF $k=60$; top 20 chunks; prompt cap about 3,500 tokens \\
+GraphRAG & context budget about 3,600 tokens (estimated); 15 priority rows; one LLM call \\
+Agentic GraphRAG & 6 tools; at most 8 LLM calls per question; preview of 25 items per result \\
+Link prediction & selection metric NDCG@10 on the validation CVEs; search spaces in Table~\ref{tab:lptuning}; selected MLP: 617 inputs, one hidden layer of 256 units, dropout 0.5, learning rate 0.001, weight decay $10^{-4}$, softmax loss, 35 epochs, ReLU, Adam, batch size 64 \\ \bottomrule
+\end{tabularx}
+\end{table}
+
+% ==========================================
+% 9  MODEL DEVELOPMENT AND EXPERIMENTS
+% ==========================================
+\section{Model Development and Experiments}
+\subsection{Question-Answering Systems}
+All design decisions were taken on the 36 development questions. With plain RAG, the local 20-billion-parameter model reached an average score of 21\,\%, and the much larger 120-billion-parameter model (hosted by Groq) reached 19\,\%; a bigger language model therefore does not repair a retrieval problem. Measured directly, the retrieved chunks contained 27\,\% of the evidence needed to answer, against 88\,\% for the GraphRAG context. GraphRAG reached 85\,\% and the first version of the agent 96\,\% on the development questions.
+
+Before the test questions were used, one change to the agent was examined: a second version of the instructions that tells the agent never to rank, pick or count from the short preview of a result. On the development questions it scored 94\,\% against 96\,\% for the first version (it improved A1 from 90\,\% to 100\,\% but dropped D1 from 75\,\% to 42\,\%). The rule decided beforehand was ``keep the second version only if it is at least as good'', so the first version was kept and all settings were frozen before the test run.
+\subsection{Link Prediction: Logistic Regression}
+Logistic regression scores each technique with a linear function of the prepared features (Section~\ref{sec:prep}). One binary logistic regression is trained for every technique (one against the rest, L2 penalty, at most 300 iterations), and the score of a technique is the value of its decision function. Only the inverse regularisation strength $C$ was searched (0.3, 1, 3, 10, 30, 100). The six settings ranged from about 0.54 to 0.64 in validation NDCG@10 (Figure~\ref{fig:lptuning}). The best was the smallest value tried, $C=0.3$ (0.637; default setting 0.635). Strong regularisation therefore helps with 617 features and 845 training CVEs, and because the best value lies at the edge of the grid, a smaller $C$ might be slightly better still.
+\subsection{Link Prediction: K-Nearest Neighbors}
+The kNN model has no training step: the score of a technique for a new CVE is the sum of the votes of the most similar training CVEs that carry that technique, each vote weighted by the similarity raised to a power; the similarity is the cosine of the prepared feature vectors, and the description embedding can be given a higher weight than the other feature groups (text weight). The grid had 24 settings: $k\in\{5,10,20,40\}$, similarity power $\in\{1,3,6\}$ and text weight $\in\{1,2\}$. The best setting was $k=20$, power 3 and text weight 2, with 0.637 against 0.591 for the default; tuning gained 0.046, more than for any other model. The whole search took one second.
+\subsection{Link Prediction: Support Vector Machine}
+The support vector machine was trained for one technique against the rest, and the score of a technique is the decision value (scikit-learn \texttt{SVC}, \texttt{gamma} set to ``scale''). The six settings were a linear kernel with $C\in\{0.01,0.1,1\}$ and an RBF kernel with $C\in\{1,10,100\}$. The RBF kernel with $C=1$ was best (0.603) and equals the default, so tuning did not improve the SVM; it had the lowest validation score of the five models.
+\subsection{Link Prediction: Random Forest}
+The random forest is a multi-output regression forest of 150 trees that predicts the 0/1 vector of all techniques at once; its predicted value is the score. The grid had eight settings: maximum depth 12 or unlimited, a minimum of 1 or 3 samples per leaf, and $\sqrt{p}$ or 10\,\% of the features per split. The best setting (unlimited depth, 3 samples per leaf, 10\,\% of the features) reached 0.633 against 0.614 for the default.
+\subsection{Link Prediction: Multilayer Perceptron}
+The MLP was searched by random search over 16 of the 32 combinations of: hidden layers (256, or 512 and 256), dropout (0.3 or 0.5), learning rate (0.001 or 0.003), weight decay ($10^{-4}$ or $10^{-3}$) and loss (binary cross-entropy or softmax); with the default setting that makes 17 trained networks. The best was one hidden layer of 256 units, dropout 0.5, learning rate 0.001, weight decay $10^{-4}$ and the softmax loss, with 0.648 against 0.616 for the default. A few settings were far worse than the rest (about 0.48; Figure~\ref{fig:lptuning}); the score of every one of the 17 settings is stored in \texttt{results/lp\_tuning.json}. Figure~\ref{fig:lpmlptrain} is the learning curve of the selected setting. The training loss falls during all 200 epochs, but the validation NDCG@10 reaches its maximum at epoch 35 and then declines slowly to about 0.61: after epoch 35 the network memorises the training CVEs. The number of epochs was therefore taken from the validation maximum (early stopping).
+\fig{fig_lp_mlp_training}{Learning curves of the selected MLP: training loss (left) and validation NDCG@10 (right) per epoch.}{fig:lpmlptrain}
+\subsection{Hyperparameter Tuning}
+The procedure follows the course guide: every model is first evaluated with its default parameters on the validation CVEs, then a search over a small space is run, and the setting with the highest validation NDCG@10 is kept. NDCG@10 was chosen as the selection metric because it rewards putting a true technique near the top of the list, which is what an analyst reads. The test CVEs were not used in any of these steps. Table~\ref{tab:lptuning} lists the search spaces and the best settings, and Figure~\ref{fig:lptuning} shows every setting that was tried.
+\timg{table_lp_tuning}{Hyperparameter search: search method, space, best setting and validation NDCG@10 before and after tuning.}{tab:lptuning}
+\fig{fig_lp_tuning}{Validation NDCG@10 of every hyperparameter setting (dots); the star marks the selected setting of each model.}{fig:lptuning}
+Tuning helped most for kNN (+0.046), the MLP (+0.032) and the random forest (+0.019), and little or not at all for logistic regression (+0.002) and the SVM (0).
+\subsection{Model Comparison and Selection}
+On the validation CVEs the tuned models reached NDCG@10 of 0.648 (MLP), 0.637 (logistic regression), 0.637 (kNN), 0.633 (random forest) and 0.603 (SVM). The rule fixed beforehand was ``take the model with the highest validation NDCG@10'', so the MLP was selected. Its lead of 0.011 over the next two models is small compared with the noise of a validation set of 181 CVEs, and we therefore treat the choice as a convention and report all five models on the test CVEs.
+\subsection{Final Model Training}
+After selection every model was fitted again with its tuned settings on the 1,026 labelled CVEs of the training and validation splits (845 + 181) and then applied once to the 181 test CVEs; the MLP was trained for exactly the 35 epochs found on validation (no validation set remains for stopping). Fitting and scoring all 10,086 CVEs took 25~s for logistic regression, 1~s for kNN, 105~s for the SVM, 19~s for the random forest and 3~s for the MLP.
+
+% ==========================================
+% 10  RESULTS
+% ==========================================
+\section{Results}
+\subsection{Question Answering on the Test Questions}
+The three systems were run once on the 72 test questions with the frozen settings (Table~\ref{tab:qasummary}). Plain RAG reached an average score of 17.3\,\% (95\,\% bootstrap interval 10.2--25.2) and answered 7 of 72 questions exactly right; for 39 questions it gave no usable answer. GraphRAG reached 83.1\,\% (74.0--91.0) with 56 of 72 answers exactly right. Agentic GraphRAG reached 92.1\,\% (85.6--97.2) with 65 of 72 exactly right.
+\timg{table_qa_summary}{Final results on the test questions.}{tab:qasummary}
+Compared on the same questions, GraphRAG is 65.8 points better than plain RAG (interval +55.0 to +75.5; better on 54 questions, worse on 1, equal on 17) and Agentic GraphRAG is 74.8 points better than plain RAG (+65.7 to +83.0; better on 60, worse on 0). Agentic GraphRAG is 9.0 points better than GraphRAG, but with 72 questions this interval just includes zero (\,$-$1.4 to +19.2; better on 14, worse on 6, equal on 52), so the overall difference between these two is suggestive, not conclusive. The clear difference is by question type and by number of hops (Figures~\ref{fig:qatype} and~\ref{fig:qahops}).
+\fig{fig_qa_score_by_type}{Average score per question type on the test questions.}{fig:qatype}
+\timg{table_qa_by_type}{Average score per question type (in brackets: exactly right / questions).}{tab:qatype}
+By number of hops the average scores of plain RAG, GraphRAG and Agentic GraphRAG are 36\,\%, 96\,\% and 85\,\% for one-hop questions, 9\,\%, 99\,\% and 100\,\% for two-hop questions, and 7\,\%, 54\,\% and 92\,\% for three-hop questions. Plain RAG collapses as soon as the answer needs more than one record. GraphRAG is excellent while one fixed context holds the evidence, and drops on three-hop questions, mainly on C2 (0\,\%), where the question asks for a ranking over groups that its context does not contain by design, and on C3 (75\,\%). The agent keeps 88--100\,\% on every three-hop type.
+\figs{fig_qa_score_by_hops}{Average score by number of hops.}{fig:qahops}
+The agent is not better everywhere: on the one-hop types A2 (KEV count) and D1 (patch priority) GraphRAG scored 88\,\% and 100\,\% against 75\,\% and 79\,\% for the agent. The D1 result is explained by the ablation in Section~\ref{sec:ablation}.
+
+Table~\ref{tab:qasummary} and Figure~\ref{fig:qacost} show the cost. Per question, plain RAG used 2,484 prompt tokens, GraphRAG 1,440 and the agent 6,213 (summed over its 3.6 LLM calls on average). The time per question was similar for all three (8.4 to 9.5 seconds); it is dominated by the length of the model's reasoning and not by the prompt size.
+\figs{fig_qa_cost_accuracy}{Accuracy against cost.}{fig:qacost}
+\timg{table_qa_outcomes}{Outcome of the answers on the test questions.}{tab:qaoutcomes}
+The agent invented one identifier in 72 answers, GraphRAG nine and plain RAG six. Which questions these were can be read from the per-question table \texttt{results/\allowbreak qa\_final\_\allowbreak per\_question.csv}, where the column \texttt{invalid} gives, for every system and every question, the number of identifiers that are not in the graph.
+\subsection{Ablation: Priority Ordering of the GraphRAG Table}\label{sec:ablation}
+The GraphRAG context contains a table of the 15 CVEs with the highest priority, sorted by the same rule that question type D1 states (KEV, then EPSS, then CVSS). To measure how much of GraphRAG's D1 score comes from this ordering, the table was rebuilt in plain CVE-id order. On the 12 D1 questions (development and test together), GraphRAG with the priority table scored 100\,\%, GraphRAG with the table in CVE-id order 22\,\%, and Agentic GraphRAG 78\,\%. The high D1 score of GraphRAG therefore comes from a pre-computed ordering that matches the question, and not from the graph itself; where the ordering is withdrawn the agent, which ranks with a tool, is clearly better.
+\subsection{Link Prediction on the Test CVEs}
+Each model ranked the techniques for the 181 test CVEs, whose labels were never used for fitting or tuning. Table~\ref{tab:lpranking} gives ranking metrics and Table~\ref{tab:lpclass} classification-style metrics for the top three predicted techniques per CVE; the intervals are 95\,\% bootstrap intervals over the test CVEs.
+\timg{table_lp_ranking}{Link prediction on the 181 test CVEs: ranking metrics (Hits@k: share of CVEs with a true technique in the top $k$).}{tab:lpranking}
+\timg{table_lp_classification}{Link prediction on the 181 test CVEs: precision, recall and F1 of the top three techniques, and area under the ROC and precision--recall curves.}{tab:lpclass}
+All five models are clearly better than the popularity baseline: NDCG@10 is between 0.591 and 0.604 against 0.446, and for the selected MLP the paired difference is +0.153 (interval +0.106 to +0.199; the MLP is better on 111 CVEs, worse on 43 and equal on 27). The gain is largest at the top of the list: Hits@1 rises from 0.304 to 0.481--0.536 and Hits@3 from 0.547 to 0.735--0.779. At $k=10$ the baseline is already at 0.856 against 0.884--0.950, because a few techniques are very frequent (8 techniques make up half of all labels), so a list of ten popular techniques usually contains one of the true ones. Figure~\ref{fig:lphits} shows this for every $k$ up to 20.
+\fig{fig_lp_hits_at_k}{Hits@$k$ on the test CVEs for $k=1,\dots,20$.}{fig:lphits}
+The five models are not distinguishable. Their NDCG@10 values lie within 0.013 of each other (0.591 to 0.604), and the intervals overlap almost completely. The model selected on validation (MLP, 0.599) and the model that happens to be best on the test CVEs (kNN, 0.604) differ by $-0.004$ (interval $-0.034$ to $+0.024$; better on 61 CVEs, worse on 62). The classification-style metrics give the same picture: the precision of the top three techniques is 0.33--0.36 and the recall 0.43--0.47 for the five models, against 0.215 and 0.281 for the baseline. Two entries of Table~\ref{tab:lpclass} need a comment. The macro-averaged ROC-AUC of the baseline is exactly 0.500 by construction, because it gives a technique the same score for every CVE, so within one technique all CVEs tie. The micro-averaged ROC-AUC of the SVM (0.822) is lower than that of the baseline (0.910) although its ranking metrics are as good as the others; the micro average compares scores across techniques, and the decision values of one-vs-rest SVMs are probably not on a comparable scale across techniques. We therefore give no weight to this one number.
+\subsection{ROC and Precision--Recall Curves}
+Figures~\ref{fig:lproc} and~\ref{fig:lppr} show the micro-averaged ROC and precision--recall curves of all models on the test CVEs. Each curve is made from the scores of all pairs of a test CVE and a technique; the areas under the curves are in Table~\ref{tab:lpclass}. A ROC curve closer to the top left and a precision--recall curve closer to the top right are better, and the dotted line marks a random classifier. Because only about one pair in a hundred is a true link, the precision--recall curve is the more informative of the two.
+\figs{fig_lp_roc}{ROC curves on the test CVEs (micro-average over all CVE--technique pairs).}{fig:lproc}
+\figs{fig_lp_pr}{Precision--recall curves on the test CVEs (micro-average).}{fig:lppr}
+\TODO{Write 2--3 sentences from the Block 15b output: which models lie clearly above the popularity baseline, how the SVM curve differs, and the precision at low recall.}
+\subsection{Confusion Matrix}\label{sec:confusion}
+A technique counts as ``predicted'' for a CVE if it is among the three highest-ranked techniques of that CVE. Every pair of a test CVE and a technique is then a true positive (predicted and in the expert mapping), a false positive (predicted, not in the mapping), a false negative (in the mapping, not predicted; true links to techniques that no model has seen count here) or a true negative. Table~\ref{tab:lpconf} gives the counts of all models and Figure~\ref{fig:lpconf} the matrix of the selected model. Accuracy is close to one for every model, including the baseline, because almost all pairs are true negatives; it is therefore not used to compare the models, and precision, recall and the ranking metrics are the informative measures. Precision and recall in Table~\ref{tab:lpconf} equal the values of Table~\ref{tab:lpclass}.
+\timg{table_lp_confusion}{Confusion counts of the top-three predictions on the test CVEs.}{tab:lpconf}
+\figs{fig_lp_confusion}{Confusion matrix of the top-three predictions of the selected model (MLP) on the test CVEs; the percentages are shares of each row.}{fig:lpconf}
+\TODO{Write 2 sentences from the Block 15b output: the number of true links found, the number of false alarms per CVE, and the share of true links that are missed.}
+\subsection{Per-Technique Results and Example Predictions}
+Table~\ref{tab:lppertech} shows, for the ten techniques that occur most often in the test labels, how often the selected model proposes the technique in its top three and how often it is right. Table~\ref{tab:lpexamples} shows three test CVEs that were chosen by a rule fixed beforehand and not by hand: in the order of the CVE identifiers, the first test CVE for which all true techniques are in the top three, the first for which some but not all are, and the first for which none is in the top ten. The examples are therefore one success, one partial success and one failure, and they do not say how often each case occurs.
+\timg{table_lp_per_technique}{Per-technique results of the selected model on the test CVEs (top-three rule).}{tab:lppertech}
+\timg{table_lp_examples}{Three test CVEs chosen by a fixed rule, with the true techniques and the top three predicted techniques of the selected model (an asterisk marks a true one).}{tab:lpexamples}
+\TODO{Write 2--3 sentences from the Block 15b output: which frequent techniques are found well or badly, and what the failure example shows.}
+\subsection{Near-Duplicate Analysis}\label{sec:neardup}
+For every test CVE the cosine similarity between its description embedding and that of the most similar labelled CVE (training or validation, the CVEs on which the final models were fitted) was computed, and the test CVEs were grouped into three groups: similarity below 0.80, from 0.80 to 0.90, and 0.90 or more. Table~\ref{tab:lpsim} and Figure~\ref{fig:lpsim} give the NDCG@10 of every model in each group together with the number of CVEs. If the models mainly find the neighbouring CVE of the same family, their scores will fall from the group with near-duplicates to the group without.
+\timg{table_lp_similarity}{NDCG@10 on the test CVEs, by similarity of the test CVE to its nearest labelled CVE.}{tab:lpsim}
+\fig{fig_lp_similarity}{NDCG@10 of the models on the test CVEs, grouped by similarity to the nearest labelled CVE.}{fig:lpsim}
+\TODO{Write 3 sentences from the Block 15b output: the size of each group (a group with fewer than 20 CVEs is very uncertain), how much the models and the baseline lose in the group with the lowest similarity, and what this means for the claim in Section~\ref{sec:lpdiscussion}.}
+\subsection{Feature-Group Ablation}\label{sec:featabl}
+To see which information the models use, kNN and the MLP (with their selected settings) were trained on the training CVEs with all five feature groups, with one group removed and with one group alone, and scored on the \emph{validation} CVEs; the test CVEs were not used. The MLP was trained with three random seeds and the table gives the mean and the standard deviation; kNN has no randomness. The popularity baseline is the reference for ``no information''.
+\timg{table_lp_feature_ablation}{Feature-group ablation on the validation CVEs (NDCG@10).}{tab:lpablation}
+\fig{fig_lp_feature_ablation}{Validation NDCG@10 of kNN and the MLP with one feature group removed (left) and with one group alone (right).}{fig:lpablation}
+\TODO{Write 3 sentences from the Block 15b output: which group is most important (look at ``without'' and ``only''), which groups add nothing, and whether the MLP and kNN agree.}
+\subsection{Learning Curve}
+Figure~\ref{fig:lplearn} shows the validation NDCG@10 of kNN, the MLP and the popularity baseline when only a part of the training CVEs is used (10, 25, 50, 75 and 100\,\%; three random subsets for each size; the MLP is trained for the same number of gradient steps as the final model). If the curve is still rising at 100\,\%, more labelled CVEs would help; if it is flat, the limit lies elsewhere.
+\timg{table_lp_learning_curve}{Validation NDCG@10 against the number of training CVEs (mean and standard deviation over three subsets).}{tab:lplearn}
+\figs{fig_lp_learning_curve}{Learning curve: validation NDCG@10 against the number of training CVEs.}{fig:lplearn}
+\TODO{Write 2 sentences from the Block 15b output: whether the curves are still rising at 100\,\% and how many CVEs are needed to beat the popularity baseline clearly.}
+\iffull
+\subsection{Hidden-Label Questions}
+\TODO{[final-year version only] Questions whose gold answers depend on links that were hidden from the graph; the agent calls the link-prediction model as a tool.}
+\fi
+
+% ==========================================
+% 11  DISCUSSION
+% ==========================================
+\section{Discussion}
+\subsection{Why the Systems Performed as They Did}
+\textbf{Plain RAG} fails because the evidence is not in the retrieved text. A question about the techniques of a CVE is answered from one page, but a question about the tactics of a product stack needs the CVE pages of every product, then their technique pages, and these pages are not similar to the question. Only 27\,\% of the needed evidence was in the retrieved chunks, and 39 of 72 test answers were empty. \textbf{GraphRAG} replaces retrieval by a graph neighbourhood and puts 88\,\% of the needed evidence into the context; it fails where the answer needs aggregation over many records (C2) or where the neighbourhood is larger than the context budget (C3). \textbf{Agentic GraphRAG} aggregates over the whole graph with tools and never needs to fit the intermediate results in the prompt, which is why its advantage grows with the number of hops (Figure~\ref{fig:qahops}).
+\subsection{Comparison with the Baselines}
+On the test questions, both graph-based systems are clearly better than plain RAG (the intervals of the paired differences are far from zero). Between GraphRAG and the agent the overall difference of 9.0 points is not statistically clear (interval $-$1.4 to +19.2); the agent is clearly better on three-hop questions and clearly not better on the one-hop D1 and A2 questions. For link prediction, all five model families beat the popularity baseline by about 0.15 NDCG@10, but they do not differ from each other (Section~\ref{sec:lpdiscussion}).
+\subsection{Strengths and Weaknesses}\label{sec:strengths}
+\emph{Strengths.} The answers are exact and traceable: every agent answer comes with the tool calls and sets it was built from. The same open model runs locally on a free GPU. The tool set is sufficient: a scripted run of the ideal tool sequence answers all 108 questions correctly, so the remaining errors are errors of the model, not of the tools. \emph{Weaknesses.} The agent needs 3.6 LLM calls and about four times the prompt tokens of GraphRAG. Of its four wrong test answers, two (A2-02, A2-08) came from counting KEV entries by hand in a short preview or a long list instead of letting a filter tool count them; one (C2-04) used the option ``linked to all products'' where ``linked to any product'' was needed and then answered with an empty list; and one (C3-09) apparently answered with a set name that did not exist, without calling any tool. These are model mistakes in following the tool protocol, and the second version of the instructions, which targeted the first kind, did not help on the development questions.
+\subsection{Link Prediction: What the Results Show}\label{sec:lpdiscussion}
+The first result is that the task can be learned: for about three out of four test CVEs (Hits@3 between 0.735 and 0.779) a true technique is among the three techniques the model ranks highest, whereas the popularity baseline manages 0.547. The second result is that model choice matters little. Five very different model families, a linear model, a neighbour vote, a kernel machine, a forest and a neural network, end within 0.013 NDCG@10 of each other, and the hyperparameter search moved single models by at most 0.046. This suggests that the limit lies in the information in the features and not in the model. The kNN result points the same way: a method that only looks at similar CVEs is as good as the MLP.
+
+This leads to a caution that the report must state openly. Before modelling we measured that the most similar training CVE of a test CVE has a median cosine similarity of 0.84 in description embedding, that 27\,\% of the test CVEs have a training CVE with similarity of at least 0.90, and that for four test CVEs the exact description also occurs in the training data. Many CVEs are near-copies of each other (the same product family, the same vulnerability class), and these tend to share techniques. Part of the measured performance may therefore be ``find the neighbouring CVE of the same family'' and not ``understand which attack technique the weakness enables''. The analysis by similarity level (\texttt{fig\_lp\_similarity}) will show how much the models lose when no near-copy exists in the training data. \TODO{Fill in after Block 15b.}
+
+The numbers also have to be read with the labels in mind. The expert mapping covers only 12\,\% of the CVEs and is surely incomplete for the CVEs it covers, so a predicted technique that is not in the mapping is not necessarily wrong; the precision of 0.33--0.36 for the top three is a lower bound on how useful the suggestions are. For an analyst the useful reading is that the list of three suggestions contains a technique worth checking for most CVEs, not that the model labels CVEs automatically.
+\subsection{Practical Implications}
+A security team could use the analyst in three ways. First, it can ask questions that combine several records, such as which CVEs of its own product stack to patch first, which ATT\&CK tactics the CVEs of the stack give an attacker access to, or which known attacker groups use all techniques of one CVE; the evidence shown with each answer (the tool trace and the evidence graph) allows a person to check the answer instead of trusting it. Second, for the 88\,\% of CVEs without an expert mapping it can propose three to ten ATT\&CK techniques worth checking. Third, the benchmark and the scoring code give a way to test any other retrieval method or language model on the same questions. What it cannot do today: it works on a data snapshot of 10,086 CVEs and not on the live NVD, its product stacks are given by name and not read from an inventory, and the technique suggestions are leads for an analyst and not labels.
+
+% ==========================================
+% 12  DEPLOYMENT
+% ==========================================
+\section{Model Deployment and Testing}
+\subsection{Deployment Approach}
+The analyst is a Streamlit web application. Its code is in a public GitHub repository (\url{\repourl}), and Streamlit Community Cloud builds it from there: it installs the packages of \texttt{requirements.txt}, starts \texttt{app.py} and serves the application at a public address (\url{\appurl}). All data are plain files in the \texttt{data/} folder of the repository: the knowledge graph (two parquet files), the precomputed link-prediction scores, the benchmark and the example questions, and the recorded runs of the evaluation. The notebook (Block 16) creates these files and checks that each is smaller than the 100~MB limit of GitHub. No machine-learning model has to be loaded when the application starts: the language model is called over the internet, and the link-prediction model is stored as its predictions for all 10,086 CVEs (the top 20 techniques of the selected MLP for each CVE). Secrets such as the API key are kept in the settings of Streamlit Community Cloud and never in the repository.
+\subsection{Deployment Tool}
+The application is written in Python with Streamlit. The evidence graph is written in the DOT language and drawn by Graphviz. The live language model is \texttt{openai/gpt-oss-20b} on the Groq API, which has the same OpenAI-style interface as the local Ollama server of the experiments; the free plan of the service has rate limits and a daily token limit. The client waits for a short rate limit (up to 45 seconds), reports a used-up daily limit in plain words, and the application limits every session to 25 questions. An important difference to the evaluation: Chapter~10 was measured with the local \texttt{gpt-oss:20b} model; the hosted model of the live application is the same model family but is served by a different system, and we did not run the test questions through it, so the live behaviour may differ slightly from the reported numbers.
+\subsection{User Interface}
+The application has three tabs and a sidebar (screenshots in Appendix~C).
+\begin{itemize}[noitemsep, topsep=2pt]
+    \item \textbf{Ask the analyst.} A drop-down list offers example questions of all nine types from the benchmark (two test questions per type); the question can also be typed freely. A check box switches to a \emph{recorded run}: instead of calling the language model, the application replays the tool calls that were recorded in the evaluation run against the graph, so that an answer and its evidence can be shown without internet access or an API key. The answer is shown as a table (identifier, type, details) or as a number; for an example question the score against the gold answer is shown as well. Below it are the tool trace (every step with the tool, its arguments and its result) and the evidence graph, a drawing of the part of the knowledge graph that leads to the answer.
+    \item \textbf{ATT\&CK link predictor.} The user enters a CVE identifier or presses a button that picks a random CVE, and gets the predicted techniques as a table (technique, name, score) and as a graph. A mark shows which predicted techniques are in the expert mapping. A note tells whether the CVE was in the training, validation or test split or has no expert mapping, because predictions for training CVEs are not an independent test. An expander shows the test metrics of the model.
+    \item \textbf{About and data.} The statistics of the loaded graph (computed live), a description of the pipeline and the headline results of the three question-answering systems.
+    \item \textbf{Sidebar.} The choice between the Agentic GraphRAG system (tools) and GraphRAG (one language-model call), the maximum number of tool steps (3 to 10, default 8 as in the evaluation), the status of the language-model service and the number of questions used in the session.
+\end{itemize}
+\subsection{Prediction Workflow}
+\paragraph{Question answering.} (1) The user selects an example or types a question. (2) The entities of the question are linked to graph nodes (CVE identifiers by a regular expression, product names by longest-first matching). (3) In GraphRAG mode, the neighbourhood facts of the entities are written as a context of at most about 3,600 tokens and the language model is called once. In agent mode the entities are loaded as sets S1, S2, \dots and the language model is called in a loop (at most 8 calls): it chooses a tool, the application runs the tool on the graph, and the result enters the next call as a new numbered set with a short preview. (4) The reply of the model is parsed; if it names a set (for example S4), the items of that set are taken as the answer (all items for a list, the first three for a ranking, the size for a count). (5) The answer is shown, with its gold-answer check if the question comes from the benchmark. (6) The evidence graph is built from the hops that the agent made: starting from the answer items, the application walks the recorded hops backwards, keeps at most 8 nodes per level and 2 predecessors per node, and draws the result with a colour per node type. In recorded-run mode, steps (3) and (4) are replaced by the deterministic replay of the recorded tool calls.
+
+\paragraph{Technique prediction.} (1) The user enters a CVE identifier. (2) The application looks the CVE up in the table of splits and in the table of predictions; an identifier that is not among the 10,086 CVEs is reported as unknown, because the application does not compute features for new CVEs. (3) The top $k$ techniques (3 to 20) with their scores are shown, with the marks described above, and the evidence graph links the CVE to the predicted techniques.
+\subsection{Deployment Testing}
+Three levels of testing were planned. (i) \emph{Automated tests} (\texttt{pytest}, in the folder \texttt{tests/} of the repository) check the parts of the application one by one on a small synthetic graph with the same schema as the real one, and the whole interface with the Streamlit test runner. (ii) \emph{A real-data test} runs the ideal tool sequence of every benchmark question against the real graph and checks that the gold answer is reproduced and that the GraphRAG context fits its budget; it needs the real \texttt{data/} folder. (iii) \emph{Manual checks} of the deployed application. Table~\ref{tab:tests} lists the test cases.
+\begin{table}[H]\centering\caption{Test plan of the application. Record the outcome of every test after running it.}\label{tab:tests}
+\footnotesize
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.7cm}>{\raggedright\arraybackslash}p{5.4cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{1.6cm}}\toprule
+\textbf{No.} & \textbf{Test} & \textbf{Expected behaviour} & \textbf{Result} \\ \midrule
+1 & graph tables load & node and edge tables load and the lookup tables are built & \TODO{pass/fail} \\
+2 & entity linking & CVE identifiers and product names of a question are found & \TODO{pass/fail} \\
+3 & GraphRAG context & the context contains the facts needed for the question & \TODO{pass/fail} \\
+4 & tool chain & a sequence of \texttt{neighbors}, \texttt{filter\_cves} and \texttt{sort\_cves} gives the expected sets & \TODO{pass/fail} \\
+5 & sorting and filtering & KEV, EPSS and CVSS ordering and filters are correct & \TODO{pass/fail} \\
+6 & agent with a scripted language model & the agent loop returns the expected answer and trace & \TODO{pass/fail} \\
+7 & step limit & after the last step the agent is forced to answer & \TODO{pass/fail} \\
+8 & replay & a replayed recorded run equals the recorded answer & \TODO{pass/fail} \\
+9 & scorer & set, ranked and count answers are scored by the rules of Chapter~6 & \TODO{pass/fail} \\
+10 & predictor lookup & top-$k$ techniques are returned for a known CVE, an unknown CVE is reported & \TODO{pass/fail} \\
+11 & answer-kind rule & ``how many'' gives a count, ``priority order'' a ranking & \TODO{pass/fail} \\
+12 & application start (interface test) & the application starts and the predictor tab returns a table & \TODO{pass/fail} \\
+13 & recorded answer (interface test) & an example question shows an answer and its evidence without a language model & \TODO{pass/fail} \\
+14 & real data: all questions solvable & the ideal tool sequence reproduces the gold answer of 108 of 108 questions & \TODO{pass/fail} \\
+15 & real data: context budget & every GraphRAG context fits the budget & \TODO{pass/fail} \\
+16 & rate limit (manual) & with a wrong key or an exhausted quota the application shows a plain message and the recorded-run mode still works & \TODO{pass/fail} \\
+17 & empty or unknown input (manual) & an empty question and an unknown CVE identifier give a message and no error page & \TODO{pass/fail} \\
+18 & public address (manual) & the application opens from the public address on another device & \TODO{pass/fail} \\ \bottomrule
+\end{tabularx}
+\end{table}
+Tests 1 to 13 are run by \texttt{pytest tests/ -v} in the repository, tests 14 and 15 by the same command once the real \texttt{data/} folder is in place. In the evaluation with the local model, an answer took 8.4 seconds on average for the agent, 9.5 seconds for GraphRAG and 8.7 seconds for plain RAG (Table~\ref{tab:qasummary}); \TODO{measure and add the response time of the deployed application with the hosted model, for example for five example questions.}
+
+% ==========================================
+% 13-15
+% ==========================================
+\section{Limitations}
+\emph{Question answering.} The product stacks in the questions are synthetic. The development set has only four questions per type, so settings tuned on it are uncertain; the test set has eight per type, which is why most per-type results come with wide intervals. Only one LLM family (gpt-oss) was used. The high D1 score of GraphRAG comes from an ordering built into its context (Section~\ref{sec:ablation}). EPSS and KEV change over time, so the answers describe one snapshot of the data. The gold answers follow the expert CVE-to-\ATTCK{} mapping and are not ground truth about real attacks.
+
+\emph{Link prediction.} The expert mapping covers about 12\,\% of the CVEs (1,207 of 10,086), so the training set has only 845 CVEs and the test set 181, and the confidence intervals are wide (about $\pm 0.05$ NDCG@10). The labels are incomplete, which makes precision a lower bound. The split is random at the level of the CVE, and many CVEs have near-copies in the training data (median similarity of the nearest training CVE 0.84), so the results are probably better than for a CVE from a new vendor or a new year; a stricter split is planned for the final-year version. The models cannot predict a technique that no training CVE carries (1.4\,\% of the true test links). \TODO{Add the near-duplicate numbers after Block 15b.}
+
+\emph{Data and deployment.} The 10,086 CVEs are a selection (all KEV CVEs, all labelled CVEs and the CVEs of 24 products), so the shares of KEV (17.7\,\%) and of labelled CVEs (12.0\,\%) are higher than in the NVD, and the results describe this graph. The data are a snapshot of November 2026. The live application uses a hosted language model that was not evaluated on the test questions, its technique predictor only covers the CVEs in the data (it does not compute features for new CVEs), and its free-tier language-model service is rate limited.
+
+\section{Conclusion}
+\paragraph{Problem.} Security teams need answers that combine several records: product $\rightarrow$ CVE $\rightarrow$ technique $\rightarrow$ tactic, mitigation or group, together with exploitation signals, and most CVEs have no known link to an ATT\&CK technique.
+\paragraph{Solution.} We built a knowledge graph of 18,661 nodes and 68,250 edges from NVD, ATT\&CK v20.1, KEV, EPSS, CWE and expert mappings, a benchmark of 108 multi-hop questions with gold answers verified by a second method, and three question-answering systems that differ only in the evidence they give to the same open language model (plain RAG, GraphRAG, Agentic GraphRAG with six graph tools). For link prediction we trained and tuned five models and a baseline on a cold-start split, and we deployed everything as a Streamlit application that shows the answer, the tool calls and the evidence graph.
+\paragraph{Findings.} On the 72 test questions, plain RAG scored 17.3\,\%, GraphRAG 83.1\,\% and Agentic GraphRAG 92.1\,\% (65 of 72 answers exactly right); both graph-based systems are clearly better than plain RAG, whose retrieval finds only 5--12\,\% of the evidence of multi-hop questions. The agent is not clearly better than GraphRAG overall (a difference of 9.0 points with an interval from $-1.4$ to $+19.2$), but clearly better on three-hop questions (92\,\% against 54\,\%), and GraphRAG's perfect D1 score depends on a pre-sorted table (22\,\% without it). For link prediction, all five models beat the popularity baseline (NDCG@10 0.591--0.604 against 0.446; for the selected MLP a paired gain of $+0.153$), a true technique is among the top three for roughly three of four test CVEs, but the models cannot be told apart from each other, and the many near-duplicate CVEs mean that the scores are probably optimistic for CVEs of a new family. The main practical lesson is that the choice of evidence mechanism mattered much more than the choice of model: a larger language model did not repair plain RAG (19\,\% against 21\,\% for the smaller model on the development questions), whereas changing from text retrieval to graph tools did.
+
+\section{Future Scope}
+\iffull
+\TODO{Short list of what remains after the final-year version.}
+\else
+Four extensions are planned for the final-year version. (1) A graph neural network (for example GraphSAGE or R-GCN) will be trained on the knowledge graph to predict CVE-to-\ATTCK{} links, evaluated with the same cold-start split and compared with the feature-based models, with a stricter split by vendor or by year to test the near-duplicate effect. (2) Hidden-label questions will be added, whose gold answers depend on links that are hidden from the graph; the agent will call the link-prediction model as a tool. (3) The ablations will be extended and the language-model comparison widened with a larger model on the test questions. (4) The front end will become a complete application (a product-stack builder, dashboards and export of answers), with real product inventories and live data feeds in place of the fixed snapshot.
+\fi
+
+\vspace{1cm}
+% ==========================================
+% REFERENCES  (every entry was opened and checked; see lit/lit_notes.md)
+% ==========================================
+\begin{thebibliography}{99}
+\bibitem{nvd} National Institute of Standards and Technology, ``National Vulnerability Database,'' \url{https://nvd.nist.gov}.
+\bibitem{kev} Cybersecurity and Infrastructure Security Agency, ``Known Exploited Vulnerabilities Catalog,'' \url{https://www.cisa.gov/known-exploited-vulnerabilities-catalog}.
+\bibitem{jacobs2021} J. Jacobs, S. Romanosky, B. Edwards, M. Roytman and I. Adjerid, ``Exploit Prediction Scoring System (EPSS),'' arXiv:1908.04856, 2019.
+\bibitem{jacobs2023} J. Jacobs, S. Romanosky, O. Suciu, B. Edwards and A. Sarabi, ``Enhancing Vulnerability Prioritization: Data-Driven Exploit Predictions with Community-Driven Insights,'' arXiv:2302.14172, 2023.
+\bibitem{spring2019} J. Spring, E. Hatleback, A. Householder, A. Manion and D. Shick, ``Prioritizing Vulnerability Response: A Stakeholder-Specific Vulnerability Categorization,'' Software Engineering Institute, Carnegie Mellon University, report, December 2019.
+\bibitem{strom2018} B. Strom, A. Applebaum, D. Miller, K. Nickels, A. Pennington and C. Thomas, ``MITRE ATT\&CK: Design and Philosophy,'' MITRE Corporation, March 2020. \url{https://www.mitre.org/news-insights/publication/mitre-attck-design-and-philosophy}
+\bibitem{ctid} Center for Threat-Informed Defense, ``Mapping ATT\&CK to CVE for Impact,'' \url{https://ctid.mitre.org/projects/mapping-attck-to-cve-for-impact/}.
+\bibitem{lewis2020} P. Lewis et al., ``Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks,'' \textit{Advances in Neural Information Processing Systems 33 (NeurIPS 2020)}, 2020.
+\bibitem{edge2024} D. Edge et al., ``From Local to Global: A Graph RAG Approach to Query-Focused Summarization,'' arXiv:2404.16130, 2024.
+\bibitem{peng2024} B. Peng et al., ``Graph Retrieval-Augmented Generation: A Survey,'' arXiv:2408.08921, 2024.
+\bibitem{yao2023} S. Yao et al., ``ReAct: Synergizing Reasoning and Acting in Language Models,'' \textit{International Conference on Learning Representations (ICLR)}, 2023, arXiv:2210.03629.
+\bibitem{abdeen2023} B. Abdeen, E. Al-Shaer, A. Singhal, L. Khan and K. Hamlen, ``SMET: Semantic Mapping of CVE to ATT\&CK and its Application to Cyber Security,'' in \textit{Data and Applications Security and Privacy XXXVI (DBSec 2023)}, vol. 13942, Springer, 2023, pp. 243--260.
+\bibitem{host2025} A. M. H{\o}st, P. Lison and L. Moonen, ``A Systematic Approach to Predict the Impact of Cybersecurity Vulnerabilities Using LLMs,'' arXiv:2508.18439, 2025.
+\bibitem{shi2023} Z. Shi, N. Matyunin, K. Graffi and D. Starobinski, ``Uncovering CWE-CVE-CPE Relations with Threat Knowledge Graphs,'' arXiv:2305.00632, 2023.
+\bibitem{simoni2025} M. Simoni, A. Fontanta, A. Saracino and P. Mori, ``TITAN: Graph-Executable Reasoning for Cyber Threat Intelligence,'' arXiv:2510.14670, 2025.
+\bibitem{simoni2024} M. Simoni, A. Saracino, V. Putnuvath and M. Conti, ``MoRSE: Bridging the Gap in Cybersecurity Expertise with Retrieval Augmented Generation,'' arXiv:2407.15748, 2024.
+\bibitem{krishna2024} V. B. Krishna, ``AttackQA: Development and Adoption of a Dataset for Assisting Cybersecurity Operations using Fine-Tuned and Open-Source LLMs,'' arXiv:2411.01073, 2024.
+\bibitem{alam2024} M. T. Alam, D. Bhusal, L. Nguyen and N. Rastogi, ``CTIBench: A Benchmark for Evaluating LLMs in Cyber Threat Intelligence,'' \textit{Advances in Neural Information Processing Systems 37 (NeurIPS 2024), Datasets and Benchmarks Track}, 2024.
+\bibitem{zhao2024} C. Zhao et al., ``Ontology-Aware RAG for Improved Question-Answering in Cybersecurity Education,'' arXiv:2412.14191, 2024.
+\bibitem{xiao2023} S. Xiao, Z. Liu, P. Zhang, N. Muennighoff, D. Lian and J.-Y. Nie, ``C-Pack: Packed Resources For General Chinese Embeddings,'' arXiv:2309.07597, 2023 (BGE models).
+\bibitem{openai2025} OpenAI, ``gpt-oss-120b \& gpt-oss-20b Model Card,'' arXiv:2508.10925, August 2025.
+\bibitem{robertson2009} S. Robertson and H. Zaragoza, ``The Probabilistic Relevance Framework: BM25 and Beyond,'' \textit{Foundations and Trends in Information Retrieval}, vol. 3, no. 4, pp. 333--389, 2009.
+\bibitem{cormack2009} G. V. Cormack, C. L. A. Clarke and S. Buettcher, ``Reciprocal Rank Fusion Outperforms Condorcet and Individual Rank Learning Methods,'' in \textit{Proc. 32nd Int. ACM SIGIR Conf. on Research and Development in Information Retrieval}, 2009, pp. 758--759.
+\iffull
+\bibitem{kipf2017} T. N. Kipf and M. Welling, ``Semi-Supervised Classification with Graph Convolutional Networks,'' \textit{International Conference on Learning Representations (ICLR)}, 2017, arXiv:1609.02907.
+\bibitem{hamilton2017} W. L. Hamilton, R. Ying and J. Leskovec, ``Inductive Representation Learning on Large Graphs,'' \textit{Advances in Neural Information Processing Systems 30 (NIPS 2017)}, 2017, arXiv:1706.02216.
+\bibitem{schlichtkrull2018} M. Schlichtkrull, T. N. Kipf, P. Bloem, R. van den Berg, I. Titov and M. Welling, ``Modeling Relational Data with Graph Convolutional Networks,'' in \textit{The Semantic Web (ESWC 2018)}, LNCS 10843, Springer, 2018, pp. 593--607.
+\fi
+\end{thebibliography}
+
+% ==========================================
+% APPENDICES
+% ==========================================
+\appendix
+\section{Source Code}
+The source code is in the repository \url{\repourl}. The application lives at the top level of the repository, the notebook and the report are in their own folders:
+\begin{verbatim}
+agentic-graphrag-threat-intel/
+  app.py                    Streamlit application (three tabs)
+  core/                     graph, tools, agent, LLM, predictor, scorer
+  data/                     graph, predictions, benchmark, examples
+  tests/                    automated tests (pytest)
+  notebooks/                the Colab notebook (Blocks 1 to 16)
+  report/                   main.tex, figures/, tables/, logo.png
+  requirements.txt          packages of the application
+  .streamlit/               theme and the template of the secrets file
+  .github/workflows/        automatic test run on every push
+\end{verbatim}
+To run the application locally: install the packages (\texttt{pip install -r requirements.txt}), unzip \texttt{app\_data.zip} (made by Block 16 of the notebook) into the repository so that the folder \texttt{data/} exists, optionally set \texttt{GROQ\_API\_KEY}, and start \texttt{streamlit run app.py}. Without a key the application still works with recorded runs and the technique predictor.
+\section{Additional Results}
+Table~\ref{tab:benchmark} lists the question types of the benchmark with an example question and its gold answer for each type, as produced by the notebook. The answers of every system to every question are in \texttt{results/qa\_final\_per\_question.csv} of the project folder.
+\timg{table_benchmark}{The benchmark: question types with an example question each.}{tab:benchmark}
+\section{Deployment Screenshots}
+Screenshots of the deployed application (files in the folder \texttt{figures/}: \texttt{fig\_app\_\allowbreak ask}, \texttt{fig\_app\_\allowbreak trace}, \texttt{fig\_app\_\allowbreak graph}, \texttt{fig\_app\_\allowbreak predictor}, \texttt{fig\_app\_\allowbreak about}).
+\fig{fig_app_ask}{Tab ``Ask the analyst'': example question and answer table.}{fig:appask}
+\fig{fig_app_trace}{Tool trace of the agent: one block for every tool call, with the arguments and the result.}{fig:apptrace}
+\fig{fig_app_graph}{Evidence graph of the same answer: the thick boxes are the items of the answer.}{fig:appgraph}
+\fig{fig_app_predictor}{Tab ``ATT\&CK link predictor'': predicted techniques of a CVE.}{fig:apppred}
+\fig{fig_app_about}{Tab ``About and data''.}{fig:appabout}
+\section{Contributions of Group Members}
+\noindent
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{0.9cm}|>{\raggedright\arraybackslash}p{3cm}|>{\centering\arraybackslash}p{2.5cm}|>{\raggedright\arraybackslash}X|>{\centering\arraybackslash}p{2cm}|}
+\hline
+\textbf{Sl.} & \textbf{Group Member} & \textbf{Regd. No.} & \textbf{Role / Responsibility} & \textbf{Contri\-bution (\%)} \\
+\hline
+1 & Satyajit Sethy & 2341019390 & Data collection and cleaning; knowledge-graph construction and checks; question benchmark and its independent gold-answer check; report chapters 3 to 5 & 33 \\
+\hline
+2 & E Sailaja & 2341019290 & Plain RAG, GraphRAG and Agentic GraphRAG; tool design; final evaluation and ablation; literature survey; report chapters 2, 6 and 7 & 33 \\
+\hline
+3 & Trushna Tripathy & 2341020046 & Link-prediction features, models, tuning and evaluation; Streamlit application, tests and deployment; diagrams; report chapters 8 to 12 & 34 \\
+\hline
+\end{tabularx}
+
+\medskip
+\noindent All three members took part in the planning, in reading and running the notebook, in testing and in checking every number of the report against the output of the runs, and each member can explain the whole project and not only his or her own part.
+\TODO{The division of work above is a proposal. Change roles and percentages so that they describe what each of you really did, and keep the three percentages adding up to 100.}
+\end{document}

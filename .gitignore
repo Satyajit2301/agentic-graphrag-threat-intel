@@ -1,0 +1,19 @@
+.streamlit/secrets.toml
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.env
+.DS_Store
+# LaTeX build files
+report/*.aux
+report/*.log
+report/*.out
+report/*.toc
+report/*.lof
+report/*.lot
+report/*.bbl
+report/*.blg
+report/*.fls
+report/*.fdb_latexmk
