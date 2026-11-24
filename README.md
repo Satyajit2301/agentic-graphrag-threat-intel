@@ -10,7 +10,9 @@ Course project, *Machine Learning Projects with Python (CSE 4192)*, B.Tech. CSE 
 | E Sailaja | 2341019290 |
 | Trushna Tripathy | 2341020046 |
 
-Live application: `https://YOUR-APP-NAME.streamlit.app` (replace after deployment) · Report: [`report/main.tex`](report/main.tex)
+Project guide: Dr. Gyana Ranjan Patra, Assistant Professor.
+
+Live application: <https://agentic-graphrag-threat-intel.streamlit.app> · Report: [`report/main.tex`](report/main.tex)
 
 ---
 
@@ -80,7 +82,7 @@ agentic-graphrag-threat-intel/
 ## Run it on your own computer
 
 ```bash
-git clone https://github.com/YOUR-GITHUB-USERNAME/agentic-graphrag-threat-intel.git
+git clone https://github.com/Satyajit2301/agentic-graphrag-threat-intel.git
 cd agentic-graphrag-threat-intel
 
 python -m venv .venv
@@ -105,7 +107,7 @@ The notebook writes all results to Google Drive (`MyDrive/GraphRAG_ThreatIntel/`
 
 1. Create the GitHub repository (see below) and push everything, including `data/`.
 2. Go to <https://share.streamlit.io>, sign in with GitHub, and choose **Create app → Deploy a public app from GitHub**.
-3. Repository: `YOUR-GITHUB-USERNAME/agentic-graphrag-threat-intel`, branch `main`, main file path `app.py`.
+3. Repository: `Satyajit2301/agentic-graphrag-threat-intel`, branch `main`, main file path `app.py`.
 4. Under **Advanced settings → Secrets** paste
 
    ```toml
@@ -113,7 +115,7 @@ The notebook writes all results to Google Drive (`MyDrive/GraphRAG_ThreatIntel/`
    ```
 
    (and, optionally, `GROQ_MODEL`). Choose Python 3.12 in the same dialog.
-5. Press **Deploy**. The first build takes a few minutes. The address is shown at the top; put it in `report/main.tex` (`\appurl`) and in this README.
+5. Press **Deploy**. The first build takes a few minutes. The address is shown at the top.
 
 Never put the key in a file of the repository. The free Groq plan has rate limits and a daily token limit; the application waits for short limits, reports an exhausted limit in plain words, and limits each session to 25 questions.
 
@@ -126,7 +128,7 @@ git init
 git add .
 git commit -m "Initial commit: Agentic GraphRAG threat-intelligence analyst"
 git branch -M main
-git remote add origin https://github.com/YOUR-GITHUB-USERNAME/agentic-graphrag-threat-intel.git
+git remote add origin https://github.com/Satyajit2301/agentic-graphrag-threat-intel.git
 git push -u origin main
 ```
 
@@ -139,7 +141,7 @@ pip install -r requirements-dev.txt
 pytest tests/ -v
 ```
 
-- `tests/test_smoke.py` checks the parts one by one (graph loading, entity linking, the tools, the agent with a scripted language model, the step limit, replay, scorer, predictor) and the whole interface with the Streamlit test runner. It uses a small synthetic graph with the same schema as the real one, so it needs neither `data/` nor a key.
+- `tests/test_smoke.py` checks the parts one by one (graph loading, entity linking, the tools, the agent with a scripted language model, the step limit, replay, scorer, predictor) and the whole interface with the Streamlit test runner (start, predictor, recorded answer, empty question, missing key, exhausted quota, unknown CVE). It uses a small synthetic graph with the same schema as the real one, so it needs neither `data/` nor a key.
 - `tests/test_real_data.py` runs the ideal tool sequence of every benchmark question on the real graph and checks that all 108 gold answers are reproduced and that every GraphRAG context fits its budget. It is skipped automatically when `data/` is missing.
 
 ## Limitations (see the report for the full list)

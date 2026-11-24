@@ -158,3 +158,47 @@ def test_app_recorded_answer(data_dir, monkeypatch):
     ask.click().run()
     assert not at.exception, at.exception
     assert any("matches the gold answer" in s.value for s in at.success)
+
+
+def _app(data_dir, monkeypatch, key=None):
+    from streamlit.testing.v1 import AppTest
+    monkeypatch.setenv("APP_DATA_DIR", str(data_dir))
+    if key:
+        monkeypatch.setenv("GROQ_API_KEY", key)
+    else:
+        monkeypatch.delenv("GROQ_API_KEY", raising=False)
+    return AppTest.from_file(str(ROOT / "app.py"), default_timeout=60).run()
+
+
+def test_app_empty_question_gives_a_message(data_dir, monkeypatch):
+    at = _app(data_dir, monkeypatch)
+    [b for b in at.button if b.label == "Ask"][0].click().run()
+    assert not at.exception, at.exception
+    assert any("Please type a question" in w.value for w in at.warning)
+
+
+def test_app_without_key_gives_a_plain_message(data_dir, monkeypatch):
+    at = _app(data_dir, monkeypatch)
+    at.text_area(key="question").set_value("Which tactics can be used against Apache HTTP Server?").run()
+    [b for b in at.button if b.label == "Ask"][0].click().run()
+    assert not at.exception, at.exception
+    assert any("No LLM key is configured" in e.value for e in at.error)
+
+
+def test_app_quota_exhausted_gives_a_plain_message(data_dir, monkeypatch):
+    from core import llm
+    def boom(self, *a, **k):
+        raise llm.QuotaExhausted("The daily token limit of the free LLM plan is used up. Try again later, or use a recorded example.")
+    monkeypatch.setattr(llm.LLM, "chat", boom)
+    at = _app(data_dir, monkeypatch, key="dummy-key")
+    at.text_area(key="question").set_value("Which tactics can be used against Apache HTTP Server?").run()
+    [b for b in at.button if b.label == "Ask"][0].click().run()
+    assert not at.exception, at.exception
+    assert any("daily token limit" in e.value for e in at.error)
+
+
+def test_app_unknown_cve_gives_a_message(data_dir, monkeypatch):
+    at = _app(data_dir, monkeypatch)
+    at.text_input(key="cve_input").set_value("CVE-1999-0000").run()
+    assert not at.exception, at.exception
+    assert any("not in the knowledge graph" in e.value for e in at.error)
